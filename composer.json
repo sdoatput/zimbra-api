@@ -13,6 +13,9 @@
     ],
     "require": {
         "php": ">=5.5.0",
+        "ext-simplexml": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
         "evenement/evenement": "~2.0",
         "guzzlehttp/guzzle": "7.*",
         "phpcollection/phpcollection": "0.*"
