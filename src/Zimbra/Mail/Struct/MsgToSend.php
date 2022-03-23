@@ -91,7 +91,7 @@ class MsgToSend extends Msg
         }
         if(null !== $sfd)
         {
-            return $this->setProperty('sfd', (bool) $sfd);
+            $this->setProperty('sfd', (bool) $sfd);
         }
     }
 
