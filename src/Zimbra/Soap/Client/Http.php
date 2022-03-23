@@ -48,7 +48,7 @@ class Http extends EventEmitter implements ClientInterface
     private $_format;
 
     /**
-     * @var Message
+     * @var SoapMessage
      */
     protected $soapMessage;
 
