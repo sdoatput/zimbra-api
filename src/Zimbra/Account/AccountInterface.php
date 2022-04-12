@@ -45,27 +45,39 @@ interface AccountInterface
     /**
      * Authenticate for an account
      *
-     * @param  AccountSelector   $account The user account.
-     * @param  string    $password The user password.
-     * @param  PreAuth   $key Pre authentication key
-     * @param  AuthToken $token The authentication token.
+     * @param  AccountSelector $account Specifies the account to authenticate against
+     * @param  string    $password Password to use in conjunction with an account
+     * @param  PreAuth   $preauth The preauth
+     * @param  AuthToken $authToken An authToken can be passed instead of account/password/preauth to validate an existing auth token.
      * @param  string    $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @param  AuthPrefs $prefs Preference.
-     * @param  AuthAttrs $attrs The attributes.
-     * @param  string    $requestedSkin If specified the name of the skin requested by the client.
-     * @param  string    $persistAuthTokenCookie Controls whether the auth token cookie in the response should be persisted when the browser exits.
-     * @return authentication token
+     * @param  AuthPrefs $prefs Preference
+     * @param  AuthAttrs $attrs The attributes
+     * @param  string    $requestedSkin The requestedSkin. If specified the name of the skin requested by the client.
+     * @param  string    $twoFactorCode The TOTP code used for two-factor authentication
+     * @param  string    $trustedDeviceToken Whether the client represents a trusted device
+     * @param  string    $deviceId Unique device identifier; used to verify trusted mobile devices
+     * @param  bool      $persistAuthTokenCookie Controls whether the auth token cookie in the response should be persisted when the browser exits.
+     * @param  bool      $csrfTokenSecured Controls whether the client supports CSRF token.
+     * @param  bool      $deviceTrusted Whether the client represents a trusted device
+     * @param  bool      $generateDeviceId
+     * @return \Zimbra\Soap\Response authentication token
      */
-    function auth(
-        AccountSelector $account = null,
-        $password = null,
-        PreAuth $preauth = null,
-        AuthToken $authToken = null,
-        $virtualHost = null,
-        AuthPrefs $prefs = null,
-        AuthAttrs $attrs = null,
-        $requestedSkin = null,
-        $persistAuthTokenCookie = null
+    public function auth(
+	    AccountSelector $account = null,
+	    $password = null,
+	    PreAuth $preauth = null,
+	    AuthToken $authToken = null,
+	    $virtualHost = null,
+	    AuthPrefs $prefs = null,
+	    AuthAttrs $attrs = null,
+	    $requestedSkin = null,
+	    $twoFactorCode = null,
+	    $trustedDeviceToken = null,
+	    $deviceId = null,
+	    $persistAuthTokenCookie = null,
+	    $csrfTokenSecured = null,
+	    $deviceTrusted = null,
+	    $generateDeviceId = null
     );
 
     /**
@@ -74,9 +86,9 @@ interface AccountInterface
      * @param  AccountSelector $account  The user account.
      * @param  string $password    The user password.
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
-    function authByAcount(
+    public function authByAcount(
         AccountSelector $account,
         $password,
         $virtualHost = null
@@ -88,9 +100,9 @@ interface AccountInterface
      * @param  AccountSelector $account The user account.
      * @param  AuthToken $token The authentication token.
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
-    function authByToken(
+    public function authByToken(
         AccountSelector $account,
         AuthToken $token,
         $virtualHost = null
@@ -102,9 +114,9 @@ interface AccountInterface
      * @param  AccountSelector $account The user account.
      * @param  string $key    Pre authentication key
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
-    function authByPre(
+    public function authByPre(
         AccountSelector $account,
         $key,
         $virtualHost = null
@@ -118,9 +130,9 @@ interface AccountInterface
      * @param  string $type      Type of addresses to auto-complete on
      * @param  string $galAcctId GAL Account ID
      * @param  int    $limit An  integer specifying the maximum number of results to return
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function autoCompleteGal(
+    public function autoCompleteGal(
         $name,
         $needExp = null,
         $type = null,
@@ -135,9 +147,9 @@ interface AccountInterface
      * @param  string $oldPassword Old password
      * @param  string $password    New Password to assign
      * @param  string $virtualHost Virtual-host is used to determine the domain of the account name
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function changePassword(
+    public function changePassword(
         AccountSelector $account,
         $oldPassword,
         $password,
@@ -148,9 +160,9 @@ interface AccountInterface
      * Check if the authed user has the specified right(s) on a target.
      *
      * @param  array $targets Array of CheckRightsTargetSpec.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function checkRights(array $targets);
+    public function checkRights(array $targets);
 
     /**
      * Create a Distribution List
@@ -159,9 +171,9 @@ interface AccountInterface
      * @param  string $name Name for the new Distribution List
      * @param  bool   $dynamic Flag type of distribution list to create
      * @param  array  $attrs Attributes specified as key value pairs
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function createDistributionList(
+    public function createDistributionList(
         $name,
         $dynamic = null,
         array $attrs = []
@@ -171,41 +183,41 @@ interface AccountInterface
      * Create an Identity
      *
      * @param  Identity $identity Specify identity to be modified Must specify either "name" or "id" attribute
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function createIdentity(Identity $identity);
+    public function createIdentity(Identity $identity);
 
     /**
      * Create a signature
      *
      * @param  Signature $signature Details of the signature to be created
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function createSignature(Signature $signature);
+    public function createSignature(Signature $signature);
 
     /**
      * Delete an Identity
      *
      * @param  NameId $identity Details of the identity to delete
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function deleteIdentity(NameId $identity);
+    public function deleteIdentity(NameId $identity);
 
     /**
      * Delete a signature
      *
      * @param  NameId $signature Details of the signature to delete
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function deleteSignature(NameId $signature);
+    public function deleteSignature(NameId $signature);
 
     /**
      * Return all targets of the specified rights applicable to the requested account
      *
      * @param  array $rights The rights.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function discoverRights(array $rights);
+    public function discoverRights(array $rights);
 
     /**
      * Perform an action on a Distribution List 
@@ -219,9 +231,9 @@ interface AccountInterface
      * @param  DLSelector $dl Identifies the distribution list to act upon
      * @param  DLAction $action Specifies the action to perform
      * @param  array $attrs Attributes
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function distributionListAction(
+    public function distributionListAction(
         DLSelector $dl,
         DLAction $action,
         array $attrs = []
@@ -233,9 +245,9 @@ interface AccountInterface
      * Has no effect if called in a <nosession> context.
      *
      * @param  bool $logoff Flag whether the exp flag is needed in the response for group entries.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function endSession($logoff = null);
+    public function endSession($logoff = null);
 
     /**
      * Returns groups the user is either a member or an owner of.
@@ -247,12 +259,12 @@ interface AccountInterface
      * the returned entry for the group will have isOwner="1",
      * but isMember will not be present.
      *
-     * @param  bool   $ownerOf  Set to 1 if the response should include groups the user is an owner of. Set to 0 (default) if do not need to know which groups the user is an owner of.
-     * @param  string $memberOf Possible values: all - need all groups the user is a direct or indirect member of. none - do not need groups the user is a member of. directOnly (default) - need groups the account is a direct member of.
-     * @param  string $attrs    Comma-seperated attributes to return
-     * @return mixed
+     * @param  bool     $ownerOf  Set to 1 if the response should include groups the user is an owner of. Set to 0 (default) if do not need to know which groups the user is an owner of.
+     * @param  MemberOf $memberOf Possible values: all - need all groups the user is a direct or indirect member of. none - do not need groups the user is a member of. directOnly (default) - need groups the account is a direct member of.
+     * @param  array    $attrs    List of attributes to return
+     * @return \Zimbra\Soap\Response
      */
-    function getAccountDistributionLists(
+    public function getAccountDistributionLists(
         $ownerOf = null,
         $memberOf = null,
         $attrs = null
@@ -262,32 +274,32 @@ interface AccountInterface
      * Get Information about an account
      *
      * @param  AccountSelector $account Use to identify the account
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getAccountInfo(AccountSelector $account);
+    public function getAccountInfo(AccountSelector $account);
 
     /**
      * Returns all locales defined in the system
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getAllLocales();
+    public function getAllLocales();
 
     /**
      * Returns the known CSV formats that can be used for import and export of addressbook.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getAvailableCsvFormats();
+    public function getAvailableCsvFormats();
 
     /**
      * Get the intersection of all translated locales installed on the server
      * and the list specified in zimbraAvailableLocale
      * The locale list in the response is sorted by display name (name attribute).
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getAvailableLocales();
+    public function getAvailableLocales();
 
     /**
      * Get the intersection of installed skins on the server and the list specified
@@ -296,9 +308,9 @@ interface AccountInterface
      * The installed skin list is obtained by a directory scan of the designated location
      * of skins on a server.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getAvailableSkins();
+    public function getAvailableSkins();
 
     /**
      * Get a distribution list, optionally with ownership information an granted rights.
@@ -307,9 +319,9 @@ interface AccountInterface
      * @param  bool   $needOwners Whether to return owners, default is 0 (i.e. Don't return owners)
      * @param  string $needRights Return grants for the specified (comma-seperated) rights. 
      * @param  array  $attrs Attributes of the distribution list
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getDistributionList(
+    public function getDistributionList(
         DLSelector $dl,
         $needOwners = null,
         $needRights = null,
@@ -319,19 +331,19 @@ interface AccountInterface
     /**
      * Get the list of members of a distribution list.
      *
-     * @param string $ld     The name of the distribution list
+     * @param string $dl     The name of the distribution list
      * @param int    $limit  The number of members to return (0 is default and means all)
      * @param int    $offset The starting offset (0, 25, etc)
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getDistributionListMembers($dl, $limit = null, $offset = null);
+    public function getDistributionListMembers($dl, $limit = null, $offset = null);
 
     /**
      * Get the identities for the authed account.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getIdentities();
+    public function getIdentities();
 
     /**
      * Get information about an account by sections.
@@ -339,25 +351,25 @@ interface AccountInterface
      *
      * @param  string $sections Comma separated list of sections to return information about.
      * @param  string $rights   Comma separated list of rights to return information about.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getInfo($sections = null, $rights = null);
+    public function getInfo($sections = null, $rights = null);
 
     /**
      * Get preferences for the authenticated account 
      *
      * @param  array $prefs Array of preferences. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getPrefs(array $prefs = []);
+    public function getPrefs(array $prefs = []);
 
     /**
      * Get account level rights. 
      *
      * @param  array $ace Specify Access Control Entries. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getRights(array $ace = []);
+    public function getRights(array $ace = []);
 
     /**
      * Get information about published shares
@@ -366,9 +378,9 @@ interface AccountInterface
      * @param  AccountSelector $owner  Specifies the owner of the share
      * @param  bool   $internal    Flags that have been proxied to this server because the specified "owner account" is homed here. Do not proxy in this case. (Used internally by ZCS)
      * @param  bool   $includeSelf Flag whether own shares should be included. 0 if shares owned by the requested account should not be included in the response. 1 (default) include shares owned by the requested account
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getShareInfo(
+    public function getShareInfo(
         GranteeChooser $grantee = null,
         AccountSelector $owner = null,
         $internal = null,
@@ -378,57 +390,57 @@ interface AccountInterface
     /**
      * Get Signatures associated with an account
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getSignatures();
+    public function getSignatures();
 
     /**
      * Get Signatures associated with an account
      * Note: This request will return a SOAP fault if the zimbraSoapExposeVersion
      *       server/globalconfig attribute is set to FALSE.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function getVersionInfo();
+    public function getVersionInfo();
 
     /**
      * Get the anti-spam WhiteList and BlackList addresses
      *
      * @return  mixed
      */
-    function getWhiteBlackList();
+    public function getWhiteBlackList();
 
     /**
      * Grant account level rights
      *
-     * @param  array $ace Specify Access Control Entries
-     * @return mixed
+     * @param  array $aces Specify Access Control Entries
+     * @return \Zimbra\Soap\Response
      */
-    function grantRights(array $aces = []);
+    public function grantRights(array $aces = []);
 
     /**
      * Modify an Identity
      *
      * @param  Identity $identity Specify identity to be modified Must specify either "name" or "id" attribute
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifyIdentity(Identity $identity);
+    public function modifyIdentity(Identity $identity);
 
     /**
      * Modify preferences
      *
      * @param  array $pref Specify the preferences to be modified
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifyPrefs(array $pref = []);
+    public function modifyPrefs(array $pref = []);
 
     /**
      * Modify properties related to zimlets
      *
      * @param  array $prop Specify the properties to be modified
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifyProperties(array $prop = []);
+    public function modifyProperties(array $prop = []);
 
     /**
      * Change attributes of the given signature
@@ -438,9 +450,9 @@ interface AccountInterface
      *       the signature will be renamed.
      *
      * @param  Signature $signature Specifies the changes to the signature
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifySignature(Signature $signature);
+    public function modifySignature(Signature $signature);
 
     /**
      * Modify the anti-spam WhiteList and BlackList addresses
@@ -448,9 +460,9 @@ interface AccountInterface
      *
      * @param  WhiteList $whiteList White list
      * @param  BlackList $blackList Black list
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifyWhiteBlackList(
+    public function modifyWhiteBlackList(
         WhiteList $whiteList = null,
         BlackList $blackList = null
     );
@@ -459,17 +471,17 @@ interface AccountInterface
      * Modify Zimlet Preferences
      *
      * @param  array $zimlet Zimlet Preference Specifications
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function modifyZimletPrefs(array $zimlet = []);
+    public function modifyZimletPrefs(array $zimlet = []);
 
     /**
      * Revoke account level rights
      *
      * @param  array $ace Specify Access Control Entries
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function revokeRights(array $ace = []);
+    public function revokeRights(array $ace = []);
 
     /**
      * Search Global Address List (GAL) for calendar resources
@@ -486,9 +498,9 @@ interface AccountInterface
      * @param int    $offset    The 0-based offset into the results list to return as the first result for this search operation.
      * @param string $galAcctId GAL Account ID
      * @param string $attrs     Comma separated list of attributes
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function searchCalendarResources(
+    public function searchCalendarResources(
         $locale = null,
         CursorInfo $cursor = null,
         $name = null,
@@ -516,12 +528,12 @@ interface AccountInterface
      * @param bool   $needSMIMECerts Internal attr, for proxied GSA search from GetSMIMEPublicCerts only
      * @param string $galAcctId   GAL Account ID
      * @param bool   $quick       "Quick" flag.
-     * @param string $sortBy      SortBy setting. Default value is "dateDesc"
+     * @param SortBy $sortBy      SortBy setting. Default value is "dateDesc"
      * @param int    $limit       The maximum number of results to return. It defaults to 10 if not specified, and is
      * @param int    $offset      Specifies the 0-based offset into the results list to return as the first result for this search operation. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function searchGal(
+    public function searchGal(
         $locale = null,
         CursorInfo $cursor = null,
         SearchFilter $searchFilter = null,
@@ -544,9 +556,9 @@ interface AccountInterface
      *
      * @param SubscribeOp $op
      * @param DLSelector $dl
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function subscribeDistributionList(SubscribeOp $op, DLSelector $dl);
+    public function subscribeDistributionList(SubscribeOp $op, DLSelector $dl);
 
     /**
      * Synchronize with the Global Address List
@@ -554,7 +566,7 @@ interface AccountInterface
      * @param string $token     The previous synchronization token if applicable
      * @param string $galAcctId GAL sync account ID
      * @param bool   $idOnly    Flag whether only the ID attributes for matching contacts should be returned. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
-    function syncGal($token = null, $galAcctId = null, $idOnly = null);
+    public function syncGal($token = null, $galAcctId = null, $idOnly = null);
 }

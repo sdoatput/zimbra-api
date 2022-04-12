@@ -12,8 +12,6 @@ namespace Zimbra\Account;
 
 use Zimbra\Soap\API;
 
-use Zimbra\Enum\AccountBy;
-use Zimbra\Enum\DistributionListBy as DistListBy;
 use Zimbra\Enum\DistributionListSubscribeOp as SubscribeOp;
 use Zimbra\Enum\GalSearchType as SearchType;
 use Zimbra\Enum\MemberOfSelector as MemberOf;
@@ -75,7 +73,7 @@ abstract class Base extends API implements AccountInterface
      * @param  bool      $csrfTokenSecured Controls whether the client supports CSRF token.
      * @param  bool      $deviceTrusted Whether the client represents a trusted device
      * @param  bool      $generateDeviceId
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function auth(
         AccountSelector $account = null,
@@ -130,7 +128,7 @@ abstract class Base extends API implements AccountInterface
      * @param  AccountSelector $account  The user account.
      * @param  string $password The user password.
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function authByAcount(
         AccountSelector $account,
@@ -147,7 +145,7 @@ abstract class Base extends API implements AccountInterface
      * @param  AccountSelector $account The user account.
      * @param  AuthToken $token The authentication token.
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function authByToken(
         AccountSelector $account,
@@ -164,7 +162,7 @@ abstract class Base extends API implements AccountInterface
      * @param  string|AccountSelector $account The user account.
      * @param  string $key Pre authentication key
      * @param  string $virtualHost If specified (in conjunction with by="name"), virtual-host is used to determine the domain of the account name, if it does not include a domain component.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function authByPre(
         AccountSelector $account,
@@ -186,7 +184,7 @@ abstract class Base extends API implements AccountInterface
      * @param  string $type      Type of addresses to auto-complete on
      * @param  string $galAcctId GAL Account ID
      * @param  int    $limit An  integer specifying the maximum number of results to return
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function autoCompleteGal(
         $name,
@@ -206,7 +204,7 @@ abstract class Base extends API implements AccountInterface
      * Request is used by a mobile gateway app/client to bootstrap/initialize itself.
      *
      * @param  bool $wantAppToken Whether an "anticipatory app account" auth token is desiredentries.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function bootstrapMobileGatewayApp($wantAppToken = null)
     {
@@ -220,7 +218,7 @@ abstract class Base extends API implements AccountInterface
      * Create app specific password
      *
      * @param  bool $appName
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function createAppSpecificPassword($appName = null)
     {
@@ -237,7 +235,7 @@ abstract class Base extends API implements AccountInterface
      * @param  string  $oldPassword Old password
      * @param  string  $password    New Password to assign
      * @param  string  $virtualHost Virtual-host is used to determine the domain of the account name
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function changePassword(
         AccountSelector $account,
@@ -256,7 +254,7 @@ abstract class Base extends API implements AccountInterface
      * Check if the authed user has the specified right(s) on a target.
      *
      * @param  array $targets Array of CheckRightsTargetSpec.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function checkRights(array $targets)
     {
@@ -271,7 +269,7 @@ abstract class Base extends API implements AccountInterface
      * @param  string $name Name for the new Distribution List
      * @param  bool   $dynamic Flag type of distribution list to create
      * @param  array  $attrs Attributes specified as key value pairs
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function createDistributionList(
         $name,
@@ -289,7 +287,7 @@ abstract class Base extends API implements AccountInterface
      * Create an Identity
      *
      * @param  Identity $identity Specify identity to be modified Must specify either "name" or "id" attribute
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function createIdentity(Identity $identity)
     {
@@ -303,7 +301,7 @@ abstract class Base extends API implements AccountInterface
      * Create a signature
      *
      * @param  Signature $signature Details of the signature to be created
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function createSignature(Signature $signature)
     {
@@ -317,7 +315,7 @@ abstract class Base extends API implements AccountInterface
      * Delete an Identity
      *
      * @param  NameId $identity Details of the identity to delete
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function deleteIdentity(NameId $identity)
     {
@@ -331,7 +329,7 @@ abstract class Base extends API implements AccountInterface
      * Delete a signature
      *
      * @param  NameId $signature Details of the signature to delete
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function deleteSignature(NameId $signature)
     {
@@ -344,7 +342,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Disable two factor auth
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function disableTwoFactorAuth()
     {
@@ -356,7 +354,7 @@ abstract class Base extends API implements AccountInterface
      * Return all targets of the specified rights applicable to the requested account
      *
      * @param  array $rights The rights.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function discoverRights(array $rights)
     {
@@ -378,7 +376,7 @@ abstract class Base extends API implements AccountInterface
      * @param  DLSelector $dl Identifies the distribution list to act upon
      * @param  DLAction $action Specifies the action to perform
      * @param  array $attrs Attributes
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function distributionListAction(
         DLSelector $dl,
@@ -399,7 +397,7 @@ abstract class Base extends API implements AccountInterface
      * @param  string    $password  Password to use in conjunction with an account
      * @param  AuthToken $authToken  Auth token issued during the first 2FA enablement step.
      * @param  bool      $csrfSupported  Whether the client supports the CSRF token.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function enableTwoFactorAuth(
         $name,
@@ -434,7 +432,7 @@ abstract class Base extends API implements AccountInterface
      * Has no effect if called in a <nosession> context.
      *
      * @param  bool $logoff Flag whether the exp flag is needed in the response for group entries.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function endSession($logoff = null)
     {
@@ -445,7 +443,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Generate scratch codes
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function generateScratchCodes()
     {
@@ -463,15 +461,15 @@ abstract class Base extends API implements AccountInterface
      * the returned entry for the group will have isOwner="1",
      * but isMember will not be present.
      *
-     * @param  bool   $ownerOf  Set to 1 if the response should include groups the user is an owner of. Set to 0 (default) if do not need to know which groups the user is an owner of.
-     * @param  string $memberOf Possible values: all - need all groups the user is a direct or indirect member of. none - do not need groups the user is a member of. directOnly (default) - need groups the account is a direct member of.
-     * @param  string $attrs    Comma-seperated attributes to return
-     * @return mixed
+     * @param  bool     $ownerOf  Set to 1 if the response should include groups the user is an owner of. Set to 0 (default) if do not need to know which groups the user is an owner of.
+     * @param  MemberOf $memberOf Possible values: all - need all groups the user is a direct or indirect member of. none - do not need groups the user is a member of. directOnly (default) - need groups the account is a direct member of.
+     * @param  array    $attrs    List of attributes to return
+     * @return \Zimbra\Soap\Response
      */
     public function getAccountDistributionLists(
         $ownerOf = null,
         $memberOf = null,
-        $attrs = null
+	    $attrs = []
     )
     {
         $request = new \Zimbra\Account\Request\GetAccountDistributionLists(
@@ -484,7 +482,7 @@ abstract class Base extends API implements AccountInterface
      * Get Information about an account
      *
      * @param  AccountSelector $account Use to identify the account
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAccountInfo(AccountSelector $account)
     {
@@ -497,7 +495,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Returns all locales defined in the system
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAllLocales()
     {
@@ -508,7 +506,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get app specific passwords
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAppSpecificPasswords()
     {
@@ -519,7 +517,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Returns the known CSV formats that can be used for import and export of addressbook.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAvailableCsvFormats()
     {
@@ -532,7 +530,7 @@ abstract class Base extends API implements AccountInterface
      * and the list specified in zimbraAvailableLocale
      * The locale list in the response is sorted by display name (name attribute).
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAvailableLocales()
     {
@@ -547,7 +545,7 @@ abstract class Base extends API implements AccountInterface
      * The installed skin list is obtained by a directory scan of the designated location
      * of skins on a server.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getAvailableSkins()
     {
@@ -562,7 +560,7 @@ abstract class Base extends API implements AccountInterface
      * @param  bool   $needOwners Whether to return owners, default is 0 (i.e. Don't return owners)
      * @param  string $needRights Return grants for the specified (comma-seperated) rights. 
      * @param  array  $attrs Attributes of the distribution list
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getDistributionList(
         DLSelector $dl,
@@ -580,10 +578,10 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get the list of members of a distribution list.
      *
-     * @param string $ld     The name of the distribution list
+     * @param string $dl     The name of the distribution list
      * @param int    $limit  The number of members to return (0 is default and means all)
      * @param int    $offset The starting offset (0, 25, etc)
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getDistributionListMembers($dl, $limit = null, $offset = null)
     {
@@ -596,7 +594,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get gcm sender id
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getGcmSenderId()
     {
@@ -607,7 +605,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get the identities for the authed account.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getIdentities()
     {
@@ -621,7 +619,7 @@ abstract class Base extends API implements AccountInterface
      *
      * @param  string $sections Comma separated list of sections to return information about.
      * @param  string $rights   Comma separated list of rights to return information about.
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getInfo($sections = null, $rights = null)
     {
@@ -634,7 +632,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get OAuth consumers
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getOAuthConsumers()
     {
@@ -646,7 +644,7 @@ abstract class Base extends API implements AccountInterface
      * Get preferences for the authenticated account 
      *
      * @param  array $prefs Array of preferences. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getPrefs(array $prefs = [])
     {
@@ -660,7 +658,7 @@ abstract class Base extends API implements AccountInterface
      * Get account level rights. 
      *
      * @param  array $ace Specify Access Control Entries. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getRights(array $ace = [])
     {
@@ -673,7 +671,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get OAuth consumers
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getScratchCodes()
     {
@@ -688,7 +686,7 @@ abstract class Base extends API implements AccountInterface
      * @param  AccountSelector $owner   Specifies the owner of the share
      * @param  bool   $internal    Flags that have been proxied to this server because the specified "owner account" is homed here. Do not proxy in this case. (Used internally by ZCS)
      * @param  bool   $includeSelf Flag whether own shares should be included. 0 if shares owned by the requested account should not be included in the response. 1 (default) include shares owned by the requested account
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getShareInfo(
         GranteeChooser $grantee = null,
@@ -706,7 +704,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get Signatures associated with an account
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getSignatures()
     {
@@ -717,7 +715,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get OAuth consumers
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getTrustedDevices()
     {
@@ -730,7 +728,7 @@ abstract class Base extends API implements AccountInterface
      * Note: This request will return a SOAP fault if the zimbraSoapExposeVersion
      *       server/globalconfig attribute is set to FALSE.
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getVersionInfo()
     {
@@ -741,7 +739,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Get the anti-spam WhiteList and BlackList addresses
      *
-     * @return  mixed
+     * @return \Zimbra\Soap\Response
      */
     public function getWhiteBlackList()
     {
@@ -752,8 +750,8 @@ abstract class Base extends API implements AccountInterface
     /**
      * Grant account level rights
      *
-     * @param  array $ace Specify Access Control Entries
-     * @return mixed
+     * @param array $aces Specify Access Control Entries
+     * @return \Zimbra\Soap\Response
      */
     public function grantRights(array $aces = [])
     {
@@ -767,7 +765,7 @@ abstract class Base extends API implements AccountInterface
      * Modify an Identity
      *
      * @param  Identity $identity Specify identity to be modified Must specify either "name" or "id" attribute
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifyIdentity(Identity $identity)
     {
@@ -781,7 +779,7 @@ abstract class Base extends API implements AccountInterface
      * Modify preferences
      *
      * @param  array $pref Specify the preferences to be modified
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifyPrefs(array $pref = [])
     {
@@ -795,7 +793,7 @@ abstract class Base extends API implements AccountInterface
      * Modify properties related to zimlets
      *
      * @param  array $prop Specify the properties to be modified
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifyProperties(array $prop = [])
     {
@@ -813,7 +811,7 @@ abstract class Base extends API implements AccountInterface
      *       the signature will be renamed.
      *
      * @param  Signature $signature Specifies the changes to the signature
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifySignature(Signature $signature)
     {
@@ -829,7 +827,7 @@ abstract class Base extends API implements AccountInterface
      *
      * @param  WhiteList $whiteList White list
      * @param  BlackList $blackList Black list
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifyWhiteBlackList(
         WhiteList $whiteList = null,
@@ -846,7 +844,7 @@ abstract class Base extends API implements AccountInterface
      * Modify Zimlet Preferences
      *
      * @param  array $zimlet Zimlet Preference Specifications
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function modifyZimletPrefs(array $zimlet = [])
     {
@@ -860,7 +858,7 @@ abstract class Base extends API implements AccountInterface
      * Registering app/device to receive push notifications 
      *
      * @param  ZmgDeviceSpec $zmgDevice Zmg device specification
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function registerMobileGatewayApp(ZmgDeviceSpec $zmgDevice)
     {
@@ -875,7 +873,7 @@ abstract class Base extends API implements AccountInterface
      *
      * @param  string $appId App ID
      * @param  string $appKey App secret key
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function renewMobileGatewayAppToken($appId, $appKey)
     {
@@ -889,7 +887,7 @@ abstract class Base extends API implements AccountInterface
      * Revoke app specific password
      *
      * @param  string $appName App name
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function revokeAppSpecificPassword($appName = null)
     {
@@ -903,7 +901,7 @@ abstract class Base extends API implements AccountInterface
      * Revoke OAuth consumer
      *
      * @param  string $accessToken access token
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function revokeOAuthConsumer($accessToken)
     {
@@ -916,7 +914,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Revoke other trusted devices
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function revokeOtherTrustedDevices()
     {
@@ -928,7 +926,7 @@ abstract class Base extends API implements AccountInterface
      * Revoke account level rights
      *
      * @param  array $ace Specify Access Control Entries
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function revokeRights(array $ace = [])
     {
@@ -941,7 +939,7 @@ abstract class Base extends API implements AccountInterface
     /**
      * Revoke trusted device
      *
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function revokeTrustedDevice()
     {
@@ -964,7 +962,7 @@ abstract class Base extends API implements AccountInterface
      * @param int    $offset    The 0-based offset into the results list to return as the first result for this search operation.
      * @param string $galAcctId GAL Account ID
      * @param string $attrs     Comma separated list of attributes
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function searchCalendarResources(
         $locale = null,
@@ -1001,10 +999,10 @@ abstract class Base extends API implements AccountInterface
      * @param bool   $needSMIMECerts Internal attr, for proxied GSA search from GetSMIMEPublicCerts only
      * @param string $galAcctId   GAL Account ID
      * @param bool   $quick       "Quick" flag.
-     * @param string $sortBy      SortBy setting. Default value is "dateDesc"
+     * @param SortBy $sortBy      SortBy setting. Default value is "dateDesc"
      * @param int    $limit       The maximum number of results to return. It defaults to 10 if not specified, and is
      * @param int    $offset      Specifies the 0-based offset into the results list to return as the first result for this search operation. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function searchGal(
         $locale = null,
@@ -1037,7 +1035,7 @@ abstract class Base extends API implements AccountInterface
      *
      * @param SubscribeOp $op
      * @param DLSelector $dl
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function subscribeDistributionList(SubscribeOp $op, DLSelector $dl)
     {
@@ -1053,7 +1051,7 @@ abstract class Base extends API implements AccountInterface
      * @param string $token     The previous synchronization token if applicable
      * @param string $galAcctId GAL sync account ID
      * @param bool   $idOnly    Flag whether only the ID attributes for matching contacts should be returned. 
-     * @return mixed
+     * @return \Zimbra\Soap\Response
      */
     public function syncGal($token = null, $galAcctId = null, $idOnly = null)
     {

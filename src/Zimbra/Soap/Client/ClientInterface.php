@@ -55,8 +55,8 @@ interface ClientInterface
     /**
      * Performs a SOAP request
      *
-     * @param  Zimbra\Soap\Request $request
-     * @return object Soap response
+     * @param  \Zimbra\Soap\Request $request
+     * @return \Zimbra\Soap\Response Soap response
      */
     function doRequest(SoapRequest $request);
 
@@ -77,7 +77,7 @@ interface ClientInterface
     /**
      * Returns last SOAP response.
      *
-     * @return string The last SOAP response, as an XML string.
+     * @return string|null The last SOAP response, as an XML string.
      */
     function lastResponse();
 

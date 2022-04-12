@@ -53,6 +53,7 @@ use Zimbra\Admin\Struct\ZimletAclStatusPri as ZimletAcl;
 
 use Zimbra\Struct\AccountNameSelector;
 use Zimbra\Struct\AccountSelector as Account;
+use Zimbra\Struct\AccountSelector as Owner;
 use Zimbra\Struct\EntrySearchFilterInfo as SearchFilter;
 use Zimbra\Struct\GranteeChooser;
 use Zimbra\Struct\Id;
@@ -112,7 +113,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id    Value of zimbra identify.
      * @param  string $alias Account alias.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function addAccountAlias($id, $alias)
     {
@@ -132,7 +133,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Logger  $logger The Logger infor.
      * @param  Account $account The account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function addAccountLogger(Logger $logger, Account $account = null)
     {
@@ -148,7 +149,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id    Value of zimbra identify.
      * @param  string $alias Distribution list alias.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function addDistributionListAlias($id, $alias)
     {
@@ -164,7 +165,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id   Value of zimbra identify.
      * @param  array  $dlms Distribution list members.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function addDistributionListMember($id, array $dlms)
     {
@@ -181,10 +182,10 @@ abstract class Base extends API implements AdminInterface
      * @param  Account $account Account.
      * @param  string $name   Name of the data source.
      * @param  string $domain Name of pre-existing domain.
-     * @param  string $type   GalMode type (both|ldap|zimbra).
+     * @param  GalMode $type   GalMode type (both|ldap|zimbra).
      * @param  string $folder Contact folder name.
      * @param  array  $attrs  Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function addGalSyncDataSource(
         Account $account,
@@ -214,10 +215,10 @@ abstract class Base extends API implements AdminInterface
      *   d. documents
      *   all. all types (equiv to "f,m,c,a,t,d")
      *
-     * @param  WaitSetSpec $waitSets The WaitSet add spec.
+     * @param  WaitSetSpec $add The WaitSet add spec.
      * @param  array $defTypes Default interest types.
      * @param  bool  $allAccounts If all is set, then all mailboxes on the system will be listened to, including any mailboxes which are created on the system while the WaitSet is in existence.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function adminCreateWaitSet(
         WaitSetSpec $add = null,
@@ -238,7 +239,7 @@ abstract class Base extends API implements AdminInterface
      * WaitSet: scalable mechanism for listening for changes to one or more accounts.
      *
      * @param  string $waitSet Waitset identify.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function adminDestroyWaitSet($waitSet)
     {
@@ -262,13 +263,13 @@ abstract class Base extends API implements AdminInterface
      *
      * @param string $waitSet Waitset identify.
      * @param string $seq Last known sequence number.
+     * @param WaitSetSpec $add Waitset to add.
+     * @param WaitSetSpec $update Waitset to update.
+     * @param WaitSetId $remove Waitset to remove.
      * @param bool   $block Flag whether or not to block until some account has new data.
      * @param array  $defTypes Default interest types.
      * @param int    $timeout Timeout length.
-     * @param array  $addWaitSets Waitset to add.
-     * @param array  $updateWaitSets Waitset to update.
-     * @param array  $removeWaitSets Waitset to remove.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function adminWaitSet(
         $waitSet,
@@ -298,7 +299,7 @@ abstract class Base extends API implements AdminInterface
      * @param string  $twoFactorCode The TOTP code used for two-factor authentication
      * @param bool    $persistAuthTokenCookie Controls whether the auth authToken cookie in the response should be persisted when the browser exits.
      * @param bool    $csrfSupported Controls whether the client supports CSRF token
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function auth(
         $name = null,
@@ -332,7 +333,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $name     Name. Only one of {auth-name} or <account> can be specified
      * @param  string $password The user password.
      * @param  string $vhost    Virtual-host is used to determine the domain of the account name.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function authByName($name, $password, $vhost = null)
     {
@@ -345,7 +346,7 @@ abstract class Base extends API implements AdminInterface
      * @param  Account $account  The user account.
      * @param  string $password The user password.
      * @param  string $vhost    Virtual-host is used to determine the domain of the account name.
-     * @return authentication token
+     * @return \Zimbra\Soap\Response authentication token
      */
     public function authByAccount(Account $account, $password, $vhost = null)
     {
@@ -356,7 +357,7 @@ abstract class Base extends API implements AdminInterface
      * Authenticate for an adminstration account.
      *
      * @param  string $token The authentication token.
-     * @return authentication token.
+     * @return \Zimbra\Soap\Response authentication token.
      */
     public function authByToken($token)
     {
@@ -374,10 +375,10 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $domain The domain name.
      * @param  string $name The name to test for autocompletion.
-     * @param  SearchType $type Type of addresses to auto-complete on.
+     * @param  GalSearchType $type Type of addresses to auto-complete on.
      * @param  string $galAcctId GAL Account ID.
      * @param  int    $limit An integer specifying the maximum number of results to return
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function autoCompleteGal(
         $domain,
@@ -398,7 +399,7 @@ abstract class Base extends API implements AdminInterface
      * @param  Domain $domain    The domain name.
      * @param  Principal $principal The name used to identify the principal.
      * @param  string $password  Password.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function autoProvAccount(
         Domain $domain,
@@ -422,7 +423,7 @@ abstract class Base extends API implements AdminInterface
      * It is only for diagnosis purpose and should not be used under normal situations.
      *
      * @param  TaskAction $action Action to perform - one of start|status|stop
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function autoProvTaskControl(TaskAction $action)
     {
@@ -438,7 +439,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $name     Name.
      * @param  string $password Password.
      * @param  array  $attrs    Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkAuthConfig($name, $password, array $attrs = [])
     {
@@ -461,7 +462,7 @@ abstract class Base extends API implements AdminInterface
      * @param array $mboxes Mailboxes.
      * @param bool  $checkSize Check size.
      * @param bool  $reportUsedBlobs If set a complete list of all blobs used by the mailbox(es) is returned.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkBlobConsistency(
         array $volumes = [],
@@ -479,7 +480,7 @@ abstract class Base extends API implements AdminInterface
      * Check existence of one or more directories and optionally create them.
      *
      * @param  array $directories Directories.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkDirectory(array $directories = [])
     {
@@ -493,7 +494,7 @@ abstract class Base extends API implements AdminInterface
      * Check Domain MX record.
      *
      * @param  string|Domain $domain The name used to identify the domain.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkDomainMXRecord(Domain $domain)
     {
@@ -507,7 +508,7 @@ abstract class Base extends API implements AdminInterface
      * Check Exchange Authorisation.
      *
      * @param  Exchange $auth Exchange auth details.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkExchangeAuth(Exchange $auth)
     {
@@ -528,14 +529,14 @@ abstract class Base extends API implements AdminInterface
      *      - Default is none if either BindDn or BindPassword are NOT provided.
      *   5. BindDn/BindPassword are required if AuthMech is "simple".
      *   6. Kerberos5Principal/Kerberos5Keytab are required only if AuthMech is "kerberos5".
-     *   7. zimbraGalSyncLdapXXX attributes are for GAL sync. They are ignored if <action> is not sync. 
+     *   7. zimbraGalSyncLdapXXX attributes are for GAL sync. They are ignored if <action> is not sync.
      *      For GAL sync, if a zimbraGalSyncLdapXXX attribute is not set,
      *      server will fallback to the corresponding zimbraGalLdapXXX attribute.
      *
      * @param  LimitedQuery  $query  Description for element text content.
      * @param  ConfigAction  $action Action (autocomplete|search|sync).
      * @param  array   $attrs  Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkGalConfig(
         LimitedQuery $query = null,
@@ -551,7 +552,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Check Health.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkHealth()
     {
@@ -563,7 +564,7 @@ abstract class Base extends API implements AdminInterface
      * Check whether a hostname can be resolved.
      *
      * @param  string $hostname Hostname.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkHostnameResolve($hostname = null)
     {
@@ -580,7 +581,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id       Zimbra identify.
      * @param  string $password Passowrd to check.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkPasswordStrength($id, $password)
     {
@@ -591,16 +592,16 @@ abstract class Base extends API implements AdminInterface
     }
 
     /**
-     * Check if a principal has the specified right on target. 
+     * Check if a principal has the specified right on target.
      * A successful return means the principal specified by the <grantee>
-     * is allowed for the specified right on the * target object. 
+     * is allowed for the specified right on the * target object.
      * Note: this request is by default proxied to the account's home server
      *
      * @param Target  $target  The target
      * @param Grantee $grantee The grantee
      * @param string  $right   Name of right.
      * @param array   $attrs   Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function checkRight(
         Target $target,
@@ -618,7 +619,7 @@ abstract class Base extends API implements AdminInterface
      * Clear cookie.
      *
      * @param  array $cookies Specifies cookies to clean.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function clearCookie(array $cookies = [])
     {
@@ -633,7 +634,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param Cos $cos
      * @param Account $account
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function clearTwoFactorAuthData(Cos $cos, Account $account)
     {
@@ -650,7 +651,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  MailboxId $mbox Mailbox.
      * @param  IndexAction $action Action to perform (start|status).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function compactIndex(MailboxId $mbox, IndexAction $action = null)
     {
@@ -667,7 +668,7 @@ abstract class Base extends API implements AdminInterface
      * The request handler updates the zimbraAggregateQuotaLastUsage domain attribute
      * and sends out warning messages for each domain having quota usage greater than a defined percentage threshold.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function computeAggregateQuotaUsage()
     {
@@ -679,8 +680,8 @@ abstract class Base extends API implements AdminInterface
     /**
      * Configure Zimlet.
      *
-     * @param  string $content Attachment identify.
-     * @return mix
+     * @param  Attachment $content Attachment identify.
+     * @return \Zimbra\Soap\Response
      */
     public function configureZimlet(Attachment $content)
     {
@@ -694,8 +695,8 @@ abstract class Base extends API implements AdminInterface
      * Copy Class of service (COS).
      *
      * @param  string $name Destination name for COS.
-     * @param  string $cos  Source COS.
-     * @return mix
+     * @param  Cos $cos  Source COS.
+     * @return \Zimbra\Soap\Response
      */
     public function copyCos($name = null, Cos $cos = null)
     {
@@ -710,8 +711,8 @@ abstract class Base extends API implements AdminInterface
      * Note: It doesn't include any account with zimbraIsSystemResource=TRUE,
      *       nor does it include any calendar resources.
      *
-     * @param  string $domain The name used to identify the domain.
-     * @return mix
+     * @param  Domain $domain The name used to identify the domain.
+     * @return \Zimbra\Soap\Response
      */
     public function countAccount(Domain $domain = null)
     {
@@ -722,7 +723,7 @@ abstract class Base extends API implements AdminInterface
     }
 
     /**
-     * Count number of objects. 
+     * Count number of objects.
      * Returns number of objects of requested type.
      * Note: For account/alias/dl, if a domain is specified,
      *       only entries on the specified domain are counted.
@@ -733,7 +734,7 @@ abstract class Base extends API implements AdminInterface
      * @param ObjType $type  Object type. Valid values: (userAccount|account|alias|dl|domain|cos|server|calresource|accountOnUCService|cosOnUCService|domainOnUCService|internalUserAccount|internalArchivingAccount).
      * @param Domain $domain The name used to identify the domain.
      * @param UcService $ucservice Key for choosing ucservice.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function countObjects(
         ObjType $type,
@@ -757,7 +758,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $name     New account's name. Must include domain (uid@name), and domain specified in name must exist.
      * @param  string $password New account's password.
      * @param  array  $attrs    Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createAccount($name, $password, array $attrs = [])
     {
@@ -772,7 +773,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  New server name.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createAlwaysOnCluster($name, array $attrs = [])
     {
@@ -792,7 +793,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $name     Name or calendar resource. Must include domain (uid@domain), and domain specified after @ must exist.
      * @param  string $password Password for calendar resource.
      * @param  array  $attrs    Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createCalendarResource($name = null, $password = null, array $attrs = [])
     {
@@ -809,7 +810,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  COS name.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createCos($name, array $attrs = [])
     {
@@ -828,7 +829,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id    ID for an existing Account.
      * @param  DataSource $dataSource  Details of data source.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createDataSource($id, DataSource $dataSource)
     {
@@ -847,7 +848,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $name    Name for distribution list.
      * @param  bool   $dynamic If 1 (true) then create a dynamic distribution list.
      * @param  array  $attrs   Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createDistributionList($name, $dynamic = null, array $attrs = [])
     {
@@ -864,7 +865,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  Name of new domain.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createDomain($name, array $attrs = [])
     {
@@ -892,7 +893,7 @@ abstract class Base extends API implements AdminInterface
      * @param string $password Password.
      * @param string $folder Contact folder name.
      * @param array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createGalSyncAccount(
         Account $account,
@@ -916,7 +917,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $dn    A valid LDAP DN String (RFC 2253) that describes the new DN to create.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createLDAPEntry($dn, array $attrs = [])
     {
@@ -932,7 +933,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  New server name.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createServer($name, array $attrs = [])
     {
@@ -947,10 +948,10 @@ abstract class Base extends API implements AdminInterface
      * The system retention policy SOAP APIs allow the administrator
      * to edit named system retention policies that users can apply to folders and tags.
      *
-     * @param  string $cos   The name used to identify the COS.
+     * @param  Cos $cos   The name used to identify the COS.
      * @param  PolicyHolder $keep  Keep policy details.
      * @param  PolicyHolder $purge Purge policy details.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createSystemRetentionPolicy(
         Cos $cos = null,
@@ -969,7 +970,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  New ucservice name.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createUCService($name, array $attrs = [])
     {
@@ -983,7 +984,7 @@ abstract class Base extends API implements AdminInterface
      * Create a volume.
      *
      * @param  Volume $volume Volume information.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createVolume(Volume $volume)
     {
@@ -997,7 +998,7 @@ abstract class Base extends API implements AdminInterface
      * Create an XMPP component.
      *
      * @param  Xmpp $xmpp XMPP Component details.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createXMPPComponent(Xmpp $xmpp)
     {
@@ -1012,7 +1013,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $name  Zimlet name.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function createZimlet($name, array $attrs = [])
     {
@@ -1027,7 +1028,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  DedupAction $action  Action to perform - one of start|status|stop.
      * @param  array  $volumes Volumes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function dedupeBlobs(DedupAction $action, array $volumes = [])
     {
@@ -1043,8 +1044,8 @@ abstract class Base extends API implements AdminInterface
      * and the requesting admin's id will be stored in the auth token for auditing purposes.
      *
      * @param  Account $account  The name used to identify the account.
-     * @param  long   $duration Lifetime in seconds of the newly-created authtoken. defaults to 1 hour. Can't be longer then zimbraAuthTokenLifetime.
-     * @return mix
+     * @param  int   $duration Lifetime in seconds of the newly-created authtoken. defaults to 1 hour. Can't be longer then zimbraAuthTokenLifetime.
+     * @return \Zimbra\Soap\Response
      */
     public function delegateAuth(Account $account, $duration = null)
     {
@@ -1062,7 +1063,7 @@ abstract class Base extends API implements AdminInterface
      *   1. this request is by default proxied to the account's home server.
      *
      * @param  string $id  Zimbra identify.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteAccount($id)
     {
@@ -1076,7 +1077,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a alwaysOnCluster .
      *
      * @param  string $id Zimbra ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteAlwaysOnCluster($id)
     {
@@ -1092,7 +1093,7 @@ abstract class Base extends API implements AdminInterface
      * Access: domain admin sufficient.
      *
      * @param  string $id  Zimbra identify.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteCalendarResource($id)
     {
@@ -1106,7 +1107,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a Class of Service (COS).
      *
      * @param  string $id  Zimbra identify.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteCos($id)
     {
@@ -1123,7 +1124,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $id     ID for an existing Account.
      * @param  Id $dataSource Data source ID.
      * @param  array  $attrs  Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteDataSource($id, Id $dataSource, array $attrs = [])
     {
@@ -1138,7 +1139,7 @@ abstract class Base extends API implements AdminInterface
      * Access: domain admin sufficient.
      *
      * @param  string $id Zimbra ID for distribution list.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteDistributionList($id)
     {
@@ -1152,7 +1153,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a domain.
      *
      * @param  string $id Zimbra ID for domain.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteDomain($id)
     {
@@ -1167,7 +1168,7 @@ abstract class Base extends API implements AdminInterface
      * Remove its zimbraGalAccountID from the domain, then deletes the account.
      *
      * @param  Account $account The name used to identify the account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteGalSyncAccount(Account $account)
     {
@@ -1181,7 +1182,7 @@ abstract class Base extends API implements AdminInterface
      * Delete an LDAP entry.
      *
      * @param  string $dn A valid LDAP DN String (RFC 2253) that describes the DN to delete.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteLDAPEntry($dn)
     {
@@ -1196,11 +1197,11 @@ abstract class Base extends API implements AdminInterface
      * The request includes the account ID (uuid) of the target mailbox on success,
      * the response includes the mailbox ID (numeric) of the deleted mailbox
      * the <mbox> element is left out of the response if no mailbox existed for that account.
-     * Note: this request is by default proxied to the account's home server 
+     * Note: this request is by default proxied to the account's home server
      * Access: domain admin sufficient
      *
      * @param  MailboxId $id Account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteMailbox(MailboxId $id)
     {
@@ -1215,7 +1216,7 @@ abstract class Base extends API implements AdminInterface
      * Note: this request is by default proxied to the referenced server.
      *
      * @param  string $id Zimbra ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteServer($id)
     {
@@ -1230,7 +1231,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Policy  $policy Retention policy.
      * @param  Cos $cos The name used to identify the COS.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteSystemRetentionPolicy(Policy $policy, Cos $cos = null)
     {
@@ -1244,7 +1245,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a UC service.
      *
      * @param  string $id Zimbra ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteUCService($id)
     {
@@ -1258,7 +1259,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a UC service.
      *
      * @param  string $id Volume ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteVolume($id)
     {
@@ -1272,7 +1273,7 @@ abstract class Base extends API implements AdminInterface
      * Delete an XMPP Component.
      *
      * @param  XmppComponent $xmpp The name used to identify the XMPP component.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteXMPPComponent(XmppComponent $xmpp)
     {
@@ -1286,7 +1287,7 @@ abstract class Base extends API implements AdminInterface
      * Delete a Zimlet.
      *
      * @param  NamedElement $zimlet Zimlet name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deleteZimlet(NamedElement $zimlet)
     {
@@ -1300,10 +1301,10 @@ abstract class Base extends API implements AdminInterface
      * Deploy a Zimlet.
      *
      * @param  DeployAction $action Action - valid values : deployAll|deployLocal|status.
-     * @param  Attachment $aid Attachment ID.
+     * @param  Attachment $content Attachment content.
      * @param  bool $flush Flag whether to flush the cache.
      * @param  bool $synchronous Synchronous flag.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function deployZimlet(
         DeployAction $action,
@@ -1322,7 +1323,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  bool $list List Sessions flag.
      * @param  bool $groupBy Group by account flag.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function dumpSessions($list = null, $groupBy = null)
     {
@@ -1340,10 +1341,10 @@ abstract class Base extends API implements AdminInterface
      * When sqlExportDir is not specified, data is not exported.
      * Export is only supported for MySQL.
      *
-     * @param  Mailbox $mbox     Mailbox.
+     * @param  ExportMailbox $mbox     Mailbox.
      * @param  string $exportDir Path for export dir.
      * @param  string $exportFilenamePrefix Export filename prefix.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function exportAndDeleteItems(
         ExportMailbox $mbox,
@@ -1361,7 +1362,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  bool  $sync    Sync flag.
      * @param  array $accounts Account names.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function fixCalendarEndTime($sync = null, array $accounts = [])
     {
@@ -1376,7 +1377,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  bool  $sync    Sync flag.
      * @param  array $accounts Account names.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function fixCalendarPriority($sync = null, array $accounts = [])
     {
@@ -1391,10 +1392,10 @@ abstract class Base extends API implements AdminInterface
      * in daylight savings time rules in various timezones.
      *
      * @param  array $account Account names.
-     * @param  TzFixup $fixupRules Fixup rules.
+     * @param  TzFixup $tzfixup Fixup rules.
      * @param  bool  $sync    Sync flag.
      * @param  int   $after   Fix appts/tasks that have instances after this time, default = January 1, 2008 00:00:00 in GMT+13:00 timezone.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function fixCalendarTZ(
         array $account = [],
@@ -1413,15 +1414,15 @@ abstract class Base extends API implements AdminInterface
      * FixFlush memory cache for specified LDAP or directory scan type/entries.
      * Directory scan caches(source of data is on local disk of the server): skin|locale
      * LDAP caches(source of data is LDAP): account|cos|domain|server|zimlet.
-     * 
-     * For LDAP caches, one or more optional <entry> can be specified. 
+     *
+     * For LDAP caches, one or more optional <entry> can be specified.
      * If <entry>(s) are specified, only the specified entries will be flushed.
      * If no <entry> is given, all enties of the type will be flushed from cache.
      * Type can contain a combination of skin, locale and zimlet.
      * E.g. type='skin,locale,zimlet' or type='zimletskin'.
      *
      * @param  Cache $cache Cache.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function flushCache(Cache $cache = null)
     {
@@ -1446,14 +1447,14 @@ abstract class Base extends API implements AdminInterface
      * @param string $oU Subject attr OU
      * @param string $cN Subject attr CN
      * @param array $subjectAltName Used to add the Subject Alt Name extension in the certificate, so multiple hosts can be supported
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function genCSR(
         $server,
         $isNew,
         CSRType $type,
         $digest = null,
-        CSRKeySize $keysize,
+        CSRKeySize $keysize = null,
         $c = null,
         $sT = null,
         $l = null,
@@ -1471,14 +1472,14 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get attributes related to an account.
-     * {request-attrs} - comma-seperated list of attrs to return 
-     * Note: this request is by default proxied to the account's home server 
+     * {request-attrs} - comma-seperated list of attrs to return
+     * Note: this request is by default proxied to the account's home server
      * Access: domain admin sufficient
      *
      * @param  Account $account  The name used to identify the account.
      * @param  bool    $applyCos Flag whether or not to apply class of service (COS) rules.
      * @param  array   $attrs    A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAccount(Account $account = null, $applyCos = null, array $attrs = [])
     {
@@ -1492,11 +1493,11 @@ abstract class Base extends API implements AdminInterface
      * Get information about an account.
      * Currently only 2 attrs are returned:
      *   zimbraId    the unique UUID of the zimbra account
-     *   zimbraMailHost  the server on which this user's mail resides 
+     *   zimbraMailHost  the server on which this user's mail resides
      * Access: domain admin sufficient
      *
      * @param  Account $account The name used to identify the account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAccountInfo(Account $account)
     {
@@ -1512,7 +1513,7 @@ abstract class Base extends API implements AdminInterface
      * it is proxied to the correct server.
      *
      * @param  Account $account  The name used to identify the account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAccountLoggers(Account $account = null)
     {
@@ -1526,7 +1527,7 @@ abstract class Base extends API implements AdminInterface
      * Get distribution lists an account is a member of.
      *
      * @param  Account $account The name used to identify the account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAccountMembership(Account $account)
     {
@@ -1541,7 +1542,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Account  $account The name used to identify the account.
      * @param  DistList $dl      The name used to identify the distribution list.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAdminConsoleUIComp(Account $account = null, DistList $dl = null)
     {
@@ -1554,7 +1555,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Returns the admin extension addon Zimlets.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAdminExtensionZimlets()
     {
@@ -1567,7 +1568,7 @@ abstract class Base extends API implements AdminInterface
      * If no <search> is present server will return all saved searches.
      *
      * @param  array $searches Array of search information
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAdminSavedSearches(array $searches = [])
     {
@@ -1580,7 +1581,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Gets the aggregate quota usage for all domains on the server.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAggregateQuotaUsageOnServer()
     {
@@ -1592,7 +1593,7 @@ abstract class Base extends API implements AdminInterface
      * Returns all account loggers that have been created on the given server
      * since the last server start.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllAccountLoggers()
     {
@@ -1606,7 +1607,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Server $server The server name.
      * @param  Domain $domain The domain name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllAccounts(Server $server = null, Domain $domain = null)
     {
@@ -1619,7 +1620,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all active servers.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllActiveServers()
     {
@@ -1631,7 +1632,7 @@ abstract class Base extends API implements AdminInterface
      * Get all Admin accounts.
      *
      * @param  string $applyCos Apply COS.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllAdminAccounts($applyCos = null)
     {
@@ -1644,7 +1645,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all alwaysOnClusters.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllAlwaysOnClusters()
     {
@@ -1658,7 +1659,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Server $server The server name.
      * @param  Domain $domain The domain name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllCalendarResources(Server $server = null, Domain $domain = null)
     {
@@ -1671,7 +1672,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all config.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllConfig()
     {
@@ -1682,7 +1683,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all classes of service (COS).
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllCos()
     {
@@ -1695,7 +1696,7 @@ abstract class Base extends API implements AdminInterface
      * Access: domain admin sufficient.
      *
      * @param  Domain $domain The domain name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllDistributionLists(Domain $domain = null)
     {
@@ -1709,7 +1710,7 @@ abstract class Base extends API implements AdminInterface
      * Get all domains.
      *
      * @param  bool $applyConfig Apply config flag.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllDomains($applyConfig = null)
     {
@@ -1724,7 +1725,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Grantee $grantee The name used to identify the grantee.
      * @param  bool $expandAllAttrs Flags whether to include all attribute names if the right is meant for all attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllEffectiveRights(Grantee $grantee = null, $expandAllAttrs = null)
     {
@@ -1737,7 +1738,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all free/busy providers.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllFreeBusyProviders()
     {
@@ -1748,7 +1749,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all free/busy providers.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllLocales()
     {
@@ -1762,7 +1763,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  integer $limit  The number of mailboxes to return (0 is default and means all).
      * @param  integer $offset The starting offset (0, 25, etc).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllMailboxes($limit = null, $offset = null)
     {
@@ -1778,7 +1779,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $targetType Target type on which a right is grantable.
      * @param  bool $expandAllAttrs Flags whether to include all attribute names in the <attrs> elements in GetRightResponse if the right is meant for all attributes.
      * @param  RightClass $rightClass Right class to return (ADMIN|USER|ALL).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllRights(
         $targetType = null,
@@ -1795,15 +1796,15 @@ abstract class Base extends API implements AdminInterface
      * Get all servers defined in the system or all servers that
      * have a particular service enabled (eg, mta, antispam, spell).
      * If {apply} is 1 (true), then certain unset attrs on a server
-     * will get their value from the global config. 
+     * will get their value from the global config.
      * If {apply} is 0 (false), then only attributes directly set on the server will be returned
      *
      * @param  string $service Service name. e.g. mta, antispam, spell.
      * @param  string $alwaysOnClusterId Always on cluster id.
-     * @param  bool   $apply   Apply config flag.
-     * @return mix
+     * @param  bool   $applyConfig   Apply config flag.
+     * @return \Zimbra\Soap\Response
      */
-    public function getAllServers($service = null, $alwaysOnClusterId, $applyConfig = null)
+    public function getAllServers($service = null, $alwaysOnClusterId = null, $applyConfig = null)
     {
         $request = new \Zimbra\Admin\Request\GetAllServers(
             $service, $alwaysOnClusterId, $applyConfig
@@ -1814,7 +1815,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all installed skins on the server.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllSkins()
     {
@@ -1825,7 +1826,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Returns all installed UC providers and applicable UC service attributes for each provider.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllUCProviders()
     {
@@ -1836,7 +1837,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all ucservices defined in the system.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllUCServices()
     {
@@ -1847,7 +1848,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all volumes.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllVolumes()
     {
@@ -1858,7 +1859,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get all XMPP components.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllXMPPComponents()
     {
@@ -1870,7 +1871,7 @@ abstract class Base extends API implements AdminInterface
      * Get all Zimlets.
      *
      * @param  ExcludeType $exclude Can be "none|extension|mail". extension: return only mail Zimlets. mail: return only admin extensions. none [default]: return both mail and admin zimlets.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAllZimlets(ExcludeType $exclude = null)
     {
@@ -1883,9 +1884,9 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get Server.
      *
-     * @param  ClusterSelector $Cluster Specify cluster.
+     * @param  ClusterSelector $cluster Specify cluster.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAlwaysOnCluster(ClusterSelector $cluster = null, array $attrs = [])
     {
@@ -1904,7 +1905,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $attrs      Comma separated list of attributes to return.
      * @param  array  $entryTypes Attributes on the specified entry types will be returned.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getAttributeInfo($attrs = null, array $entryTypes = [])
     {
@@ -1921,7 +1922,7 @@ abstract class Base extends API implements AdminInterface
      * @param  CalendarResource $calResource Specify calendar resource.
      * @param  bool $applyCos Flag whether to apply Class of Service (COS).
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCalendarResource(CalendarResource $calResource = null, $applyCos = null, array $attrs = [])
     {
@@ -1939,7 +1940,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $server The server's ID whose cert is to be got.
      * @param  CertType $type Certificate type. Value: staged - view the staged crt. Other options (all, mta, ldap, mailboxd, proxy) are used to view the deployed crt
      * @param  CSRType $option Required only when type is "staged". Could be "self" (self-signed cert) or "comm" (commerical cert).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCert($server, CertType $type, CSRType $option = null)
     {
@@ -1953,7 +1954,7 @@ abstract class Base extends API implements AdminInterface
      * Get clear two factor auth data status.
      *
      * @param  Cos $cos
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getClearTwoFactorAuthDataStatus(Cos $cos = null)
     {
@@ -1967,7 +1968,7 @@ abstract class Base extends API implements AdminInterface
      * Get Config request.
      *
      * @param  KeyValuePair $attr Attribute.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getConfig(KeyValuePair $attr = null)
     {
@@ -1980,7 +1981,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Cos $cos The name used to identify the COS.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCos(Cos $cos = null, array $attrs = [])
     {
@@ -2002,7 +2003,7 @@ abstract class Base extends API implements AdminInterface
      * @param  TargetWithType $target Target.
      * @param  Domain $domain The name used to identify the domain.
      * @param  Cos $cos The name used to identify the COS..
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCreateObjectAttrs(TargetWithType $target, Domain $domain = null, Cos $cos = null)
     {
@@ -2017,7 +2018,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $server Server ID. Can be "--- All Servers ---" or the ID of a server.
      * @param  CSRType $type Type of CSR (required). Value: self mean self-signed certificate; comm mean commercial certificate
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCSR($server = null, CSRType $type = null)
     {
@@ -2028,7 +2029,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get current volumes.
      *
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getCurrentVolumes()
     {
@@ -2043,7 +2044,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  string $id    Account ID for an existing account.
      * @param  array  $attrs Array of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDataSources($id, array $attrs = [])
     {
@@ -2062,7 +2063,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string $id    ID of target.
      * @param  string $name  Name of target.
      * @param  array  $attrs Array of name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDelegatedAdminConstraints(
         TargetType $type,
@@ -2081,7 +2082,7 @@ abstract class Base extends API implements AdminInterface
      * Get devices.
      *
      * @param  Account $account The name used to identify the account.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDevices(Account $account)
     {
@@ -2097,7 +2098,7 @@ abstract class Base extends API implements AdminInterface
      * @param  integer  $offset The starting offset (0, 25 etc).
      * @param  bool     $sortAscending Flag whether to sort in ascending order 1 (true) is the default.
      * @param  array    $attrs  Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDistributionList(
         DistList $dl = null,
@@ -2119,7 +2120,7 @@ abstract class Base extends API implements AdminInterface
      * @param  DistList $dl     The name used to identify the distribution list.
      * @param  integer  $limit  The maximum number of DLs to return (0 is default and means all).
      * @param  integer  $offset The starting offset (0, 25 etc).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDistributionListMembership(
         DistList $dl = null,
@@ -2135,11 +2136,11 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get information about a domain.
-     * 
+     *
      * @param  Domain $domain The name used to identify the domain.
      * @param  bool   $applyConfig Apply config flag. True, then certain unset attrs on a domain will get their values from the global config. False, then only attributes directly set on the domain will be returned.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDomain(Domain $domain = null, $applyConfig = null, array $attrs = [])
     {
@@ -2155,10 +2156,10 @@ abstract class Base extends API implements AdminInterface
      * It returns attributes that are pertinent to domain settings
      * for cases when the user is not authenticated.
      * For example, URL to direct the user to upon logging out or when auth token is expired.
-     * 
+     *
      * @param  Domain $domain The name used to identify the domain.
      * @param  bool   $applyConfig Apply config flag. True, then certain unset attrs on a domain will get their values from the global config. False, then only attributes directly set on the domain will be returned.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getDomainInfo(Domain $domain = null, $applyConfig = null)
     {
@@ -2173,16 +2174,15 @@ abstract class Base extends API implements AdminInterface
      * Effective rights are the rights the admin is actually allowed.
      * It is the net result of applying ACL checking rules given the target and grantee.
      * Specifically denied rights will not be returned.
-     * 
+     *
      * @param  Target $target  The name used to identify the target.
-     * @param  string $type    Target type. Valid values: (account|calresource|cos|dl|group|domain|server|ucservice|xmppcomponent|zimlet|config|global).
      * @param  Grantee  $grantee Grantee.
      * @param  AttrMethod $expandAllAttrs  Whether to include all attribute names in the <getAttrs>/<setAttrs> elements in the response if all attributes of the target are gettable/settable.
      *                         Valid values are:
      *                         1. getAttrs: expand attrs in getAttrs in the response
      *                         2. setAttrs: expand attrs in setAttrs in the response
      *                         3. getAttrs,setAttrs: expand attrs in both getAttrs and setAttrs in the response
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getEffectiveRights(
         Target $target,
@@ -2200,9 +2200,9 @@ abstract class Base extends API implements AdminInterface
      * Get Free/Busy provider information.
      * If the optional element <provider/> is present in the request, the response contains the requested provider only.
      * If no provider is supplied in the request, the response contains all the providers.
-     * 
+     *
      * @param  NamedElement $provider Provider name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getFreeBusyQueueInfo(NamedElement $provider)
     {
@@ -2212,16 +2212,16 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Returns all grants on the specified target entry,
-     * or all grants granted to the specified grantee entry. 
+     * or all grants granted to the specified grantee entry.
      * The authenticated admin must have an effective "viewGrants"
-     * (TBD) system right on the specified target/grantee. 
+     * (TBD) system right on the specified target/grantee.
      * At least one of <target> or <grantee> must be specified.
      * If both <target> and <grantee> are specified, only grants that are granted
      * on the target to the grantee are returned.
-     * 
+     *
      * @param  Target $target The name used to identify the target.
      * @param  Grantee $grantee Grantee.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getGrants(Target $target = null, Grantee $grantee = null)
     {
@@ -2231,26 +2231,26 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get index statistics.
-     * 
+     *
      * @param  MailboxId $id  Mailbox account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
-    public function getIndexStats(MailboxId $mbox)
+    public function getIndexStats(MailboxId $id)
     {
-        $request = new \Zimbra\Admin\Request\GetIndexStats($mbox);
+        $request = new \Zimbra\Admin\Request\GetIndexStats($id);
         return $this->getClient()->doRequest($request);
     }
 
     /**
      * Get index statistics.
-     * 
+     *
      * @param  string  $query Query string. Should be an LDAP-style filter string (RFC 2254).
      * @param  string  $ldapSearchBase LDAP search base. An LDAP-style filter string that defines an LDAP search base (RFC 2254).
      * @param  string  $sortBy Name of attribute to sort on. default is null.
      * @param  bool    $sortAscending Flag whether to sort in ascending order 1 (true) is default.
      * @param  integer $limit Limit - the maximum number of LDAP objects (records) to return (0 is default and means all).
      * @param  integer $offset The starting offset (0, 25, etc).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getLDAPEntries(
         $query,
@@ -2269,8 +2269,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get License information.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getLicenseInfo()
     {
@@ -2289,12 +2289,12 @@ abstract class Base extends API implements AdminInterface
      *      Result: all of the statistics for the given host/group are returned,
      *      if start and end are specified, limit/expand the timerange to the given setting.
      *      If limit=true is specified, attempt to reduce result set to under 500 records
-     * 
+     *
      * @param  HostName $hostname Hostname.
      * @param  StatsSpec $stats Stats specification.
      * @param  TimeAttr $startTime Start time.
      * @param  TimeAttr $endTime   End time .
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getLoggerStats(
         HostName $hostname = null,
@@ -2311,22 +2311,22 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get a Mailbox.
      * Note: this request is by default proxied to the account's home server.
-     * 
+     *
      * @param  MailboxId $id Mailbox account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
-    public function getMailbox(MailboxId $mbox)
+    public function getMailbox(MailboxId $id)
     {
         $request = new \Zimbra\Admin\Request\GetMailbox(
-            $mbox
+	        $id
         );
         return $this->getClient()->doRequest($request);
     }
 
     /**
      * Get MailBox Statistics.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getMailboxStats()
     {
@@ -2348,11 +2348,11 @@ abstract class Base extends API implements AdminInterface
      * This allows us to let the user dictate when to do a queue scan.
      * The scan-flag in the response indicates that the server has not completed scanning
      * the MTA queue, and that this scan is in progress,
-     * and the client should ask again in a little while. 
+     * and the client should ask again in a little while.
      * The more-flag in the response indicates that more qi's are available past the limit specified in the request.
-     * 
+     *
      * @param  ServerMail  $server Server Mail Queue Query.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function  getMailQueue(ServerMail $server)
     {
@@ -2364,9 +2364,9 @@ abstract class Base extends API implements AdminInterface
      * Get a count of all the mail queues by counting the number of files in the queue directories.
      * Note that the admin server waits for queue counting to complete before responding
      * - client should invoke requests for different servers in parallel.
-     * 
+     *
      * @param  NamedElement $server MTA server name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getMailQueueInfo(NamedElement $server)
     {
@@ -2376,8 +2376,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Returns the memcached client configuration on a mailbox server.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getMemcachedClientConfig()
     {
@@ -2387,7 +2387,7 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Returns the memcached client configuration on a mailbox server.
-     * 
+     *
      * @param  string  $domain Domain - the domain name to limit the search to.
      * @param  bool    $allServers Whether to fetch quota usage for all domain accounts from across all mailbox servers, default is false, applicable when domain attribute is specified.
      * @param  integer $limit Limit - the number of accounts to return (0 is default and means all).
@@ -2395,7 +2395,7 @@ abstract class Base extends API implements AdminInterface
      * @param  QuotaSortBy $sortBy SortBy - valid values: "percentUsed", "totalUsed", "quotaLimit".
      * @param  bool    $sortAscending Whether to sort in ascending order 0 (false) is default, so highest quotas are returned first.
      * @param  bool    $refresh Refresh - whether to always recalculate the data even when cached values are available. 0 (false) is the default..
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getQuotaUsage(
         $domain = null,
@@ -2415,12 +2415,12 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get definition of a right.
-     * 
+     *
      * @param  string $right  Right name.
      * @param  bool   $expandAllAttrs Whether to include all attribute names in the <attrs> elements in the response if the right is meant for all attributes.
      *                        0 (false) [default] default, do not include all attribute names in the <attrs> elements.
      *                        1 (true)  include all attribute names in the <attrs> elements.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getRight($right, $expandAllAttrs = null)
     {
@@ -2432,9 +2432,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get Rights Document.
-     * 
+     *
      * @param  array $packages Packages.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getRightsDoc(array $packages = [])
     {
@@ -2444,13 +2444,13 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get Server.
-     * 
+     *
      * @param  Server $server Server.
      * @param  bool   $applyConfig Apply config flag.
-     *                        If {apply} is 1 (true), then certain unset attrs on a server will get their values from the global config. 
+     *                        If {apply} is 1 (true), then certain unset attrs on a server will get their values from the global config.
      *                        if {apply} is 0 (false), then only attributes directly set on the server will be returned.
      * @param  array  $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getServer(Server $server = null, $applyConfig = null, array $attrs = [])
     {
@@ -2464,10 +2464,10 @@ abstract class Base extends API implements AdminInterface
      * Get Network Interface information for a server.
      * Get server's network interfaces. Returns IP addresses and net masks.
      * This call will use zmrcd to call /opt/zimbra/libexec/zmserverips
-     * 
+     *
      * @param  Server $server Server name.
      * @param  IpType $type   Specifics the ipAddress type (ipV4/ipV6/both). default is ipv4.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getServerNIfs(Server $server, IpType $type = null)
     {
@@ -2482,9 +2482,9 @@ abstract class Base extends API implements AdminInterface
      * These are the same stats that are logged to mailboxd.csv.
      * If no <stat> element is specified, all server stats are returned.
      * If the stat name is invalid, returns a SOAP fault.
-     * 
+     *
      * @param  array $stats Stats.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getServerStats(array $stats = [])
     {
@@ -2494,8 +2494,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get Service Status.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getServiceStatus()
     {
@@ -2506,13 +2506,13 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get Sessions.
      * Access: domain admin sufficient (though a domain admin can't specify "domains" as a type).
-     * 
+     *
      * @param  SessionType  $type Type - valid values soap|imap|admin.
      * @param  GetSessionsSortBy $sortBy Sort by - valid values nameAsc|nameDesc|createdAsc|createdDesc|accessedAsc|accessedDesc.
      * @param  integer $limit Limit - the number of sessions to return per page (0 is default and means all).
      * @param  integer $offset Offset - the starting offset (0, 25, etc).
      * @param  bool    $refresh Refresh. If 1 (true), ignore any cached results and start fresh..
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getSessions(
         SessionType $type,
@@ -2531,12 +2531,11 @@ abstract class Base extends API implements AdminInterface
     /**
      * Iterate through all folders of the owner's mailbox and return shares
      * that match grantees specified by the <grantee> specifier.
-     * 
-     * @param  string $owner The name used to identify the account.
-     * @param  string $type  If specified, filters the result by the specified grantee type.
-     * @param  string $name  If specified, filters the result by the specified grantee name.
-     * @param  string $id    If specified, filters the result by the specified grantee ID.
-     * @return mix
+     *
+     * @param Owner $owner Owner.
+     * @param GranteeChooser $grantee Grantee.
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getShareInfo(Account $owner, GranteeChooser $grantee = null)
     {
@@ -2550,9 +2549,9 @@ abstract class Base extends API implements AdminInterface
      * Get System Retention Policy.
      * The system retention policy SOAP APIs allow the administrator
      * to edit named system retention policies that users can apply to folders and tags.
-     * 
-     * @param  string $cos The name used to identify the COS.
-     * @return mix
+     *
+     * @param  Cos $cos The name used to identify the COS.
+     * @return \Zimbra\Soap\Response
      */
     public function getSystemRetentionPolicy(Cos $cos = null)
     {
@@ -2564,10 +2563,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get UC Service.
-     * 
+     *
      * @param  UcService $ucservice UC Service name.
      * @param  array $attrs A of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getUCService(UcService $ucservice = null, array $attrs = [])
     {
@@ -2579,8 +2578,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get Version information.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getVersionInfo()
     {
@@ -2590,9 +2589,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Get Volume.
-     * 
+     *
      * @param  int $id ID of volume.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getVolume($id)
     {
@@ -2603,10 +2602,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Get XMPP Component.
      * XMPP stands for Extensible Messaging and Presence Protocol.
-     * 
+     *
      * @param  XmppComponent $xmpp XMPP Component selector.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getXMPPComponent(XmppComponent $xmpp, array $attrs = [])
     {
@@ -2616,10 +2615,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Retreives a list of search tasks running or cached on a server.
-     * 
+     *
      * @param  NamedElement $name Zimlet name.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function getZimlet(NamedElement $name, array $attrs = [])
     {
@@ -2635,8 +2634,8 @@ abstract class Base extends API implements AdminInterface
      * on what other Zimlets priorities are.
      * The same Zimlet will show priority 0 if all by itself,
      * or priority 3 if there are three other Zimlets with higher priority.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function getZimletStatus()
     {
@@ -2646,11 +2645,11 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Grant a right on a target to an individual or group grantee.
-     * 
+     *
      * @param  Target $target  Target selector. The name used to identify the target.
      * @param  Grantee  $grantee Grantee selector.
      * @param  RightModifier  $right   Right selector.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function grantRight(
         Target $target,
@@ -2666,10 +2665,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Puts the mailbox of the specified account into maintenance lockout or removes it from maintenance lockout .
-     * 
+     *
      * @param  AccountNameSelector $account Account email address.
-     * @param  string $server op Operation. One of 'start' or 'end'
-     * @return mix
+     * @param  LockoutOperation $op Operation. One of 'start' or 'end'
+     * @return \Zimbra\Soap\Response
      */
     public function lockoutMailbox(AccountNameSelector $account, LockoutOperation $op = null)
     {
@@ -2681,9 +2680,9 @@ abstract class Base extends API implements AdminInterface
      * Command to act on invidual queue files.
      * This proxies through to postsuper.
      * list-of-ids can be ALL.
-     * 
+     *
      * @param  ServerQueue $server Server Mail Queue Query.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function mailQueueAction(ServerQueue $server)
     {
@@ -2695,9 +2694,9 @@ abstract class Base extends API implements AdminInterface
      * Command to invoke postqueue -f.
      * All queues cached in the server are stale after invoking this because
      * this is a global operation to all the queues in a given server.
-     * 
+     *
      * @param  NamedElement $server MTA server.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function mailQueueFlush(NamedElement $server)
     {
@@ -2707,9 +2706,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Migrate an account.
-     * 
+     *
      * @param  IdAndAction $migrate Specification for the migration.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function migrateAccount(IdAndAction $migrate)
     {
@@ -2719,10 +2718,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Modify an account.
-     * 
+     *
      * @param  string $id    Zimbra ID of account.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyAccount($id, array $attrs = [])
     {
@@ -2736,9 +2735,9 @@ abstract class Base extends API implements AdminInterface
      * If {search-query} is empty => delete the search if it exists.
      * If {search-name} already exists => replace with new {search-query}.
      * If {search-name} does not exist => save as a new search.
-     * 
+     *
      * @param  array $searchs Array of NamedValue.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyAdminSavedSearches(array $searchs = [])
     {
@@ -2751,10 +2750,10 @@ abstract class Base extends API implements AdminInterface
      * Notes:
      *   1. an empty attribute value removes the specified attr.
      *   2. his request is by default proxied to the referenced server.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyAlwaysOnCluster($id, array $attrs = [])
     {
@@ -2768,10 +2767,10 @@ abstract class Base extends API implements AdminInterface
      *   1. an empty attribute value removes the specified attr.
      *   2. this request is by default proxied to the resources's home server.
      * Access: domain admin sufficient. limited set of attributes that can be updated by a domain admin.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyCalendarResource($id, array $attrs = [])
     {
@@ -2782,9 +2781,9 @@ abstract class Base extends API implements AdminInterface
     /**
      * Modify Configuration attributes.
      * Note: an empty attribute value removes the specified attr.
-     * 
+     *
      * @param  array $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyConfig(array $attrs = [])
     {
@@ -2795,10 +2794,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Modify Class of Service (COS) attributes.
      * Note: an empty attribute value removes the specified attr.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyCos($id, array $attrs = [])
     {
@@ -2811,11 +2810,11 @@ abstract class Base extends API implements AdminInterface
      * Only the attributes specified in the request are modified.
      * To change the name, specify "zimbraDataSourceName" as an attribute.
      * Note: this request is by default proxied to the account's home server
-     * 
+     *
      * @param  string $id     Existing account ID.
      * @param  Id $dataSource Data source  ID.
      * @param  array  $attrs  Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyDataSource($id, Id $dataSource, array $attrs = [])
     {
@@ -2829,12 +2828,12 @@ abstract class Base extends API implements AdminInterface
      * Modify constraint (zimbraConstraint) for delegated admin on global config or a COS.
      * If constraints for an attribute already exists, it will be replaced by the new constraints.
      * I <constraint> is an empty element, constraints for the attribute will be removed.
-     * 
+     *
      * @param  TargetType $type  Target type. Valid values: (account|calresource|cos|dl|group|domain|server|ucservice|xmppcomponent|zimlet|config|global).
      * @param  string $id    ID.
      * @param  string $name  Name.
      * @param  array  $attrs Constaint attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyDelegatedAdminConstraints(
         TargetType $type,
@@ -2853,10 +2852,10 @@ abstract class Base extends API implements AdminInterface
      * Modify attributes for a Distribution List.
      * Notes: an empty attribute value removes the specified attr.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyDistributionList($id, array $attrs = [])
     {
@@ -2869,10 +2868,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Modify attributes for a domain.
      * Note: an empty attribute value removes the specified attr.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyDomain($id, array $attrs = [])
     {
@@ -2884,10 +2883,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Modify an LDAP Entry.
-     * 
+     *
      * @param  string $dn    A valid LDAP DN String (RFC 2253) that identifies the LDAP object.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyLDAPEntry($dn, array $attrs = [])
     {
@@ -2902,10 +2901,10 @@ abstract class Base extends API implements AdminInterface
      * Notes:
      *   1. An empty attribute value removes the specified attr.
      *   2. His request is by default proxied to the referenced server.
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyServer($id, array $attrs = [])
     {
@@ -2917,10 +2916,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Modify system retention policy.
-     * 
+     *
      * @param  Policy $policy New policy.
      * @param  Cos $cos The name used to identify the COS.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifySystemRetentionPolicy(Policy $policy, Cos $cos = null)
     {
@@ -2933,10 +2932,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Modify attributes for a UC service.
      * Notes: An empty attribute value removes the specified attr
-     * 
+     *
      * @param  string $id    Zimbra ID.
      * @param  array  $attrs Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyUCService($id, array $attrs = [])
     {
@@ -2948,10 +2947,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Modify volume.
-     * 
+     *
      * @param  string $id     Zimbra ID.
      * @param  Volume $volume Volume information.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyVolume($id, Volume $volume)
     {
@@ -2963,9 +2962,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Modify Zimlet.
-     * 
+     *
      * @param  ZimletAcl $zimlet Zimlet information.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function modifyZimlet(ZimletAcl $zimlet)
     {
@@ -2978,8 +2977,8 @@ abstract class Base extends API implements AdminInterface
     /**
      * A request that does nothing and always returns nothing.
      * Used to keep an admin session alive.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function noOp()
     {
@@ -2989,8 +2988,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Ping.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function ping()
     {
@@ -3001,9 +3000,9 @@ abstract class Base extends API implements AdminInterface
     /**
      * Purge the calendar cache for an account.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  string $id Zimbra ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function purgeAccountCalendarCache($id)
     {
@@ -3015,9 +3014,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Purges the queue for the given freebusy provider on the current host.
-     * 
+     *
      * @param  NamedElement $provider Provider name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function purgeFreeBusyQueue(NamedElement $provider = null)
     {
@@ -3030,9 +3029,9 @@ abstract class Base extends API implements AdminInterface
     /**
      * Purges aged messages out of trash, spam, and entire mailbox.
      * (if <mbox> element is omitted, purges all mailboxes on server).
-     * 
+     *
      * @param  MailboxId $mbox Mailbox Account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function purgeMessages(MailboxId $mbox)
     {
@@ -3049,10 +3048,10 @@ abstract class Base extends API implements AdminInterface
      * the free/busy for all the accounts in the domain to the configured free/busy providers.
      * When <account/> list is specified, the server will push the free/busy for
      * the listed accounts to the providers.
-     * 
-     * @param  Names $domains Domain names specification.
+     *
+     * @param  Names $domain Domain names specification.
      * @param  Id $account Account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function pushFreeBusy(Names $domain = null, Id $account = null)
     {
@@ -3068,9 +3067,9 @@ abstract class Base extends API implements AdminInterface
      * It is intended for debugging use only and should not be used for production uses.
      * This API is not guaranteed to be stable between releases in any way
      * and might be removed without warning.
-     * 
+     *
      * @param  string $waitSet WaitSet ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function queryWaitSet($waitSet = null)
     {
@@ -3085,10 +3084,10 @@ abstract class Base extends API implements AdminInterface
      * Access: domain admin sufficient.
      * Note: This request is by default proxied to the account's home server.
      * Note: Only one of {ids} and {types} may be specified.
-     * 
+     *
      * @param  ReindexMailbox $mbox  Specify reindexing to perform.
      * @param  ReIndexAction $action Action to perform.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function reIndex(ReindexMailbox $mbox, ReIndexAction $action = null)
     {
@@ -3104,9 +3103,9 @@ abstract class Base extends API implements AdminInterface
      * and size counts.
      * Access: domain admin sufficient.
      * Note: this request is by default proxied to the account's home server.
-     * 
+     *
      * @param  MailboxId $mbox Specify reindexing to perform.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function recalculateMailboxCounts(MailboxId $mbox)
     {
@@ -3120,7 +3119,7 @@ abstract class Base extends API implements AdminInterface
      * Deregister authtokens that have been deregistered on the sending server.
      *
      * @param  array  $tokens Auth tokens.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function refreshRegisteredAuthTokens(array $tokens)
     {
@@ -3132,8 +3131,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Reload LocalConfig.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function reloadLocalConfig()
     {
@@ -3145,8 +3144,8 @@ abstract class Base extends API implements AdminInterface
      * Reloads the memcached client configuration on this server.
      * Memcached client layer is reinitialized accordingly.
      * Call this command after updating the memcached server list, for example.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function reloadMemcachedClientConfig()
     {
@@ -3158,10 +3157,10 @@ abstract class Base extends API implements AdminInterface
      * Remove Account Alias.
      * Access: domain admin sufficient.
      * Note: this request is by default proxied to the account's home server.
-     * 
+     *
      * @param  string $alias Account alias.
      * @param  string $id    Zimbra ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function removeAccountAlias($alias, $id = null)
     {
@@ -3179,10 +3178,10 @@ abstract class Base extends API implements AdminInterface
      * If only the logger is specified, removes that custom logger from all accounts.
      * If neither element is specified, removes all custom loggers from all accounts
      * on the server that receives the request.
-     * 
+     *
      * @param  Account $account Use to select account.
      * @param  Logger  $logger  Logger category.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function removeAccountLogger(Account $account = null, Logger $logger = null)
     {
@@ -3195,15 +3194,15 @@ abstract class Base extends API implements AdminInterface
     /**
      * Remove a device or remove all devices attached to an account.
      * This will not cause a reset of sync data, but will cause a reset of policies on the next sync.
-     * 
+     *
      * @param  Account  $account  Use to select account.
      * @param  DeviceId $deviceId Device specification - Note - if not supplied ALL devices will be removed.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
-    public function removeDevice(Account $account, DeviceId $device = null)
+    public function removeDevice(Account $account, DeviceId $deviceId = null)
     {
         $request = new \Zimbra\Admin\Request\RemoveDevice(
-            $account, $device
+            $account, $deviceId
         );
         return $this->getClient()->doRequest($request);
     }
@@ -3211,10 +3210,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Remove Distribution List Alias.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  string $id    Zimbra ID
      * @param  string $alias Distribution list alias.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function removeDistributionListAlias($id, $alias)
     {
@@ -3226,13 +3225,13 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Remove Distribution List Member.
-     * Unlike add, remove of a non-existent member causes an exception and no modification to the list. 
+     * Unlike add, remove of a non-existent member causes an exception and no modification to the list.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  string $id   Zimbra ID
      * @param  array  $dlms Members.
      * @param  array  $accounts Accounts.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function removeDistributionListMember($id, array $dlms, array $accounts = [])
     {
@@ -3245,11 +3244,11 @@ abstract class Base extends API implements AdminInterface
     /**
      * Rename Account.
      * Access: domain admin sufficient.
-     * Note: this request is by default proxied to the account's home server. 
-     * 
+     * Note: this request is by default proxied to the account's home server.
+     *
      * @param  string $id      Zimbra ID
-     * @param  array  $newName New account name.
-     * @return mix
+     * @param  string  $newName New account name.
+     * @return \Zimbra\Soap\Response
      */
     public function renameAccount($id, $newName)
     {
@@ -3262,11 +3261,11 @@ abstract class Base extends API implements AdminInterface
     /**
      * Rename Calendar Resource.
      * Access: domain admin sufficient.
-     * Note: this request is by default proxied to the account's home server. 
-     * 
+     * Note: this request is by default proxied to the account's home server.
+     *
      * @param  string $id      Zimbra ID
-     * @param  array  $newName New Calendar Resource name.
-     * @return mix
+     * @param  string  $newName New Calendar Resource name.
+     * @return \Zimbra\Soap\Response
      */
     public function renameCalendarResource($id, $newName)
     {
@@ -3278,10 +3277,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Rename Class of Service (COS).
-     * 
+     *
      * @param  string $id      Zimbra ID
-     * @param  array  $newName New COS name.
-     * @return mix
+     * @param  string  $newName New COS name.
+     * @return \Zimbra\Soap\Response
      */
     public function renameCos($id, $newName)
     {
@@ -3294,10 +3293,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Rename Distribution List.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  string $id      Zimbra ID
-     * @param  array  $newName New Distribution List name.
-     * @return mix
+     * @param  string  $newName New Distribution List name.
+     * @return \Zimbra\Soap\Response
      */
     public function renameDistributionList($id, $newName)
     {
@@ -3309,10 +3308,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Rename LDAP Entry.
-     * 
+     *
      * @param  string $dn     A valid LDAP DN String (RFC 2253) that identifies the LDAP object
-     * @param  array  $new_dn New DN - a valid LDAP DN String (RFC 2253) that describes the new DN to be given to the LDAP object.
-     * @return mix
+     * @param  string  $new_dn New DN - a valid LDAP DN String (RFC 2253) that describes the new DN to be given to the LDAP object.
+     * @return \Zimbra\Soap\Response
      */
     public function renameLDAPEntry($dn, $new_dn)
     {
@@ -3324,10 +3323,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Rename Unified Communication Service.
-     * 
+     *
      * @param  string $id      Zimbra ID
-     * @param  array  $newName New UC Service name.
-     * @return mix
+     * @param  string  $newName New UC Service name.
+     * @return \Zimbra\Soap\Response
      */
     public function renameUCService($id, $newName)
     {
@@ -3339,8 +3338,8 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Removes all account loggers and reloads /opt/zimbra/conf/log4j.properties.
-     * 
-     * @return mix
+     *
+     * @return \Zimbra\Soap\Response
      */
     public function resetAllLoggers()
     {
@@ -3351,10 +3350,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Resume sync with a device or all devices attached to an account if currently suspended.
      * This will cause a policy reset, but will not reset sync data.
-     * 
+     *
      * @param  Account  $account The name used to identify the account.
      * @param  DeviceId $device  Device ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function resumeDevice(Account $account, DeviceId $device = null)
     {
@@ -3366,11 +3365,11 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Revoke a right from a target that was previously granted to an individual or group grantee.
-     * 
+     *
      * @param  Target $target Target selector. The name used to identify the target.
      * @param  Grantee $grantee Grantee selector.
      * @param  RightModifier $right Right selector.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function revokeRight(
         Target $target,
@@ -3388,9 +3387,9 @@ abstract class Base extends API implements AdminInterface
      * Runs the server-side unit test suite.
      * If <test>'s are specified, then run the requested tests (instead of the standard test suite).
      * Otherwise the standard test suite is run.
-     * 
-     * @param  string $tests Array test name.
-     * @return mix
+     *
+     * @param  array $tests Array test name.
+     * @return \Zimbra\Soap\Response
      */
     public function runUnitTests(array $tests = [])
     {
@@ -3403,7 +3402,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Search Accounts.
      * Access: domain admin sufficient (a domain admin can't specify "domains" as a type).
-     * 
+     *
      * @param  string  $query  Query string - should be an LDAP-style filter string (RFC 2254).
      * @param  integer $limit  The maximum number of accounts to return (0 is default and means all).
      * @param  integer $offset The starting offset (0, 25, etc).
@@ -3413,7 +3412,7 @@ abstract class Base extends API implements AdminInterface
      * @param  string  $sortBy Name of attribute to sort on. Default is the account name.
      * @param  array   $types Array of types to return. Legal values are: accounts|resources (default is accounts).
      * @param  bool    $sortAscending Whether to sort in ascending order. Default is 1 (true).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function searchAccounts(
         $query,
@@ -3437,7 +3436,7 @@ abstract class Base extends API implements AdminInterface
      * Search Auto Prov Directory.
      * Only one of <name> or <query> can be provided.
      * If neither is provided, the configured search filter for auto provision will be used.
-     * 
+     *
      * @param  Domain  $domain  Domain name to limit the search to (do not use if searching for domains).
      * @param  string  $keyAttr Name of attribute for the key.
      * @param  string  $query   Query string - should be an LDAP-style filter string (RFC 2254).
@@ -3447,7 +3446,7 @@ abstract class Base extends API implements AdminInterface
      * @param  integer $offset  The starting offset (0, 25, etc).
      * @param  bool    $refresh Refresh - whether to always re-search in LDAP even when cached entries are available. 0 (false) is the default.
      * @param  array   $attrs   A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function searchAutoProvDirectory(
         Domain $domain,
@@ -3470,7 +3469,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Search for Calendar Resources.
      * Access: domain admin sufficient.
-     * 
+     *
      * @param  SearchFilter  $searchFilter Search filter condition.
      * @param  integer $limit  The maximum number of calendar resources to return (0 is default and means all).
      * @param  integer $offset The starting offset (0, 25, etc).
@@ -3478,8 +3477,8 @@ abstract class Base extends API implements AdminInterface
      * @param  bool    $applyCos  Flag whether or not to apply the COS policy to calendar resource. Specify 0 (false) if only requesting attrs that aren't inherited from COS.
      * @param  string  $sortBy   Name of attribute to sort on. default is the calendar resource name.
      * @param  bool    $sortAscending    Whether to sort in ascending order. Default is 1 (true).
-     * @param  string  $attrs  A list of attributes.
-     * @return mix
+     * @param  array  $attrs  A list of attributes.
+     * @return \Zimbra\Soap\Response
      */
     public function searchCalendarResources(
         SearchFilter $searchFilter = null,
@@ -3501,7 +3500,7 @@ abstract class Base extends API implements AdminInterface
     /**
      * Search directory.
      * Access: domain admin sufficient (though a domain admin can't specify "domains" as a type).
-     * 
+     *
      * @param  string  $query       Query string - should be an LDAP-style filter string (RFC 2254).
      * @param  integer $maxResults         Maximum results that the backend will attempt to fetch from the directory before returning an account.TOO_MANY_SEARCH_RESULTS error.
      * @param  integer $limit       The maximum number of accounts to return (0 is default and means all).
@@ -3514,7 +3513,7 @@ abstract class Base extends API implements AdminInterface
      * @param  bool    $sortAscending Whether to sort in ascending order. Default is 1 (true).
      * @param  bool    $countOnly   Whether response should be count only. Default is 0 (false).
      * @param  array   $attrs       Array of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function searchDirectory(
         $query = null,
@@ -3541,13 +3540,13 @@ abstract class Base extends API implements AdminInterface
     /**
      * Search Global Address Book (GAL).
      * Notes: admin verison of mail equiv. Used for testing via zmprov.
-     * 
+     *
      * @param  string  $domain    Domain name.
      * @param  string  $name      Name.
      * @param  integer $limit     The maximum number of entries to return (0 is default and means all).
      * @param  GalSearchType $type Type of addresses to search. Valid values: all|account|resource|group.
      * @param  string  $galAcctId GAL account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function searchGal(
         $domain,
@@ -3566,10 +3565,10 @@ abstract class Base extends API implements AdminInterface
     /**
      * Set current volume.
      * Notes: Each SetCurrentVolumeRequest can set only one current volume type.
-     * 
+     *
      * @param  integer $id   ID.
      * @param  VolumeType $type Volume type: 1 (primary message), 2 (secondary message) or 10 (index).
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function setCurrentVolume($id, VolumeType $type)
     {
@@ -3581,7 +3580,7 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Set local server online.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function setLocalServerOnline()
     {
@@ -3593,10 +3592,10 @@ abstract class Base extends API implements AdminInterface
      * Set Password.
      * Access: domain admin sufficient.
      * Note: this request is by default proxied to the account's home server.
-     * 
+     *
      * @param  string $id          Zimbra ID.
      * @param  string $newPassword New password.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function setPassword($id, $newPassword)
     {
@@ -3611,7 +3610,7 @@ abstract class Base extends API implements AdminInterface
      *
      * @param  Server $server Specify server.
      * @param  array $attrs A list of attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function setServerOffline(Server $server = null, array $attrs = [])
     {
@@ -3623,10 +3622,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Suspend a device or all devices attached to an account from further sync actions.
-     * 
+     *
      * @param  Account  $account The name used to identify the account.
      * @param  DeviceId $device  Device ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function suspendDevice(Account $account, DeviceId $device = null)
     {
@@ -3647,13 +3646,13 @@ abstract class Base extends API implements AdminInterface
      *      regardless of the status since last sync.
      *      Reset needs to be done when there is a significant change in the configuration,
      *      such as filter, attribute map, or search base.
-     * 
-     * @param  SyncGalAccount  $galAccounts SyncGalAccount data source specifications.
-     * @return mix
+     *
+     * @param  SyncGalAccount  $account SyncGalAccount data source specifications.
+     * @return \Zimbra\Soap\Response
      */
     public function syncGalAccount(SyncGalAccount $account = null)
     {
-        $request = new \Zimbra\Admin\Request\SyncGalAccount(
+        $request = new Request\SyncGalAccount(
             $account
         );
         return $this->getClient()->doRequest($request);
@@ -3661,10 +3660,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Undeploy Zimlet.
-     * 
+     *
      * @param  string $name   Zimlet name.
      * @param  string $action Action.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function undeployZimlet($name, $action = null)
     {
@@ -3676,10 +3675,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Update device status.
-     * 
+     *
      * @param  Account $account  Account selector.
      * @param  IdStatus $device  Information on new device status.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function updateDeviceStatus(Account $account, IdStatus $device)
     {
@@ -3692,12 +3691,12 @@ abstract class Base extends API implements AdminInterface
     /**
      * Generate a new Cisco Presence server session ID and persist the newly generated session id
      * in zimbraUCCiscoPresenceSessionId attribute for the specified UC service..
-     * 
+     *
      * @param  UcService $ucservice The UC service.
      * @param  string $username  App username.
      * @param  string $password  App password.
      * @param  array  $attrs     Attributes.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function updatePresenceSessionId(
         UcService $ucservice,
@@ -3714,12 +3713,12 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Upload domain certificate.
-     * 
+     *
      * @param  string $certAid      Certificate attach ID.
      * @param  string $certFilename Certificate name.
      * @param  string $keyAid       Key attach ID.
      * @param  string $keyFilename  Key name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function uploadDomCert(
         $certAid,
@@ -3736,10 +3735,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Upload proxy CA.
-     * 
+     *
      * @param  string $certAid      Certificate attach ID.
      * @param  string $certFilename Certificate name.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function uploadProxyCA($certAid, $certFilename)
     {
@@ -3751,10 +3750,10 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Verify Certificate Key.
-     * 
+     *
      * @param  string $cert    Certificate.
      * @param  string $privkey Private key.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function verifyCertKey($cert = null, $privkey = null)
     {
@@ -3766,9 +3765,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Mailbox selector.
-     * 
+     *
      * @param  MailboxId $id Account ID.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function verifyIndex(MailboxId $id)
     {
@@ -3780,11 +3779,11 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Verify Store Manager.
-     * 
+     *
      * @param  int  $fileSize.
      * @param  int  $num.
      * @param  bool $checkBlobs.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function verifyStoreManager($fileSize = null, $num = null, $checkBlobs = null)
     {
@@ -3796,9 +3795,9 @@ abstract class Base extends API implements AdminInterface
 
     /**
      * Version Check.
-     * 
+     *
      * @param  VersionCheckAction $action Action. Either check or status.
-     * @return mix
+     * @return \Zimbra\Soap\Response
      */
     public function versionCheck(VersionCheckAction $action)
     {

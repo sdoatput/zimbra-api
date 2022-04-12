@@ -53,7 +53,6 @@ abstract class Base extends EventEmitter implements StructInterface
      * Constructor method for Base
      *
      * @param  string $value
-     * @return self
      */
     public function __construct($value = null)
     {
@@ -113,7 +112,7 @@ abstract class Base extends EventEmitter implements StructInterface
      * Gets a property
      *
      * @param  string $name
-     * @return mix
+     * @return mixed
      */
     public function getProperty($name)
     {
@@ -121,17 +120,15 @@ abstract class Base extends EventEmitter implements StructInterface
         {
             return $this->_properties->get($name)->get();
         }
-        else
-        {
-            return null;
-        }
+
+	    return null;
     }
 
     /**
      * Sets a property
      *
      * @param  string $name
-     * @param  mix $value
+     * @param  mixed $value
      * @return self
      */
     public function setProperty($name, $value)
@@ -159,7 +156,7 @@ abstract class Base extends EventEmitter implements StructInterface
      * Gets a child
      *
      * @param  string $name
-     * @return mix
+     * @return mixed
      */
     public function getChild($name)
     {
@@ -167,17 +164,15 @@ abstract class Base extends EventEmitter implements StructInterface
         {
             return $this->_children->get($name)->get();
         }
-        else
-        {
-            return null;
-        }
+
+	    return null;
     }
 
     /**
      * Sets a child
      *
      * @param  string $name
-     * @param  mix $value
+     * @param  mixed $value
      * @return self
      */
     public function setChild($name, $value)
@@ -372,6 +367,6 @@ abstract class Base extends EventEmitter implements StructInterface
      */
     public function __toString()
     {
-        return $this->toXml()->asXml();
+        return (string)$this->toXml()->asXml();
     }
 }

@@ -27,11 +27,10 @@ class DeployZimlet extends Base
 {
     /**
      * Constructor method for DeployZimlet
-     * @param string $action Action - valid values : deployAll|deployLocal|status
+     * @param Action $action Action - valid values : deployAll|deployLocal|status
      * @param Attachment $content The content
      * @param bool $flush Flag whether to flush the cache
      * @param bool $synchronous Synchronous flag
-     * @return self
      */
     public function __construct(
         Action $action,

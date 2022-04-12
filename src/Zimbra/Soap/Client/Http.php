@@ -114,11 +114,10 @@ class Http extends EventEmitter implements ClientInterface
         {
             return self::$_instances[$key];
         }
-        else
-        {
-            self::$_instances[$key] = new self($location);
-            return self::$_instances[$key];
-        }
+
+	    self::$_instances[$key] = new self($location);
+
+	    return self::$_instances[$key];
     }
 
     /**
@@ -231,7 +230,7 @@ class Http extends EventEmitter implements ClientInterface
     /**
      * Performs a SOAP request
      *
-     * @param  Zimbra\Soap\Reques $request
+     * @param  \Zimbra\Soap\Request $request
      * @return object Soap response
      */
     public function doRequest(SoapRequest $request)
@@ -269,7 +268,7 @@ class Http extends EventEmitter implements ClientInterface
     /**
      * Returns last SOAP request.
      *
-     * @return mix The last SOAP request, as an XML string.
+     * @return string The last SOAP request, as an XML string.
      */
     public function lastRequest()
     {
@@ -279,9 +278,9 @@ class Http extends EventEmitter implements ClientInterface
     /**
      * Returns the SOAP headers from the last request.
      *
-     * @return mix The last SOAP request headers.
+     * @return array The last SOAP request headers.
      */
-    function lastRequestHeaders()
+    public function lastRequestHeaders()
     {
         return $this->headers;
     }
@@ -289,13 +288,13 @@ class Http extends EventEmitter implements ClientInterface
     /**
      * Returns last SOAP response.
      *
-     * @return mix The last SOAP response, as an XML string.
+     * @return string|null The last SOAP response, as an XML string.
      */
     public function lastResponse()
     {
         if($this->response instanceof HttpResponse)
         {
-            return $this->response->getBody();
+            return (string)$this->response->getBody();
         }
         return null;
     }
@@ -303,7 +302,7 @@ class Http extends EventEmitter implements ClientInterface
     /**
      * Returns the SOAP headers from the last response.
      *
-     * @return mix The last SOAP response headers.
+     * @return array The last SOAP response headers.
      */
     public function lastResponseHeaders()
     {
